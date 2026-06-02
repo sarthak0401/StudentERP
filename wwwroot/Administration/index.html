@@ -1,0 +1,945 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Administration Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css" integrity="sha512-DIW4FkYTOxjCqRt7oS9BFO+nVOwDL4bzukDyDtMO7crjUZhwpyrWBFroq+IqRe6VnJkTpRAS6nhDvf0w+wHmxg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f5f7fb;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 260px;
+            min-width: 260px;
+            height: 100vh;
+            background-color: #1a1f2e;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            padding: 20px 18px 10px;
+            border-bottom: 1px solid #2d3548;
+            margin-bottom: 10px;
+        }
+
+            .sidebar-brand h3 {
+                color: white;
+                font-size: 18px;
+                font-weight: 700;
+                margin: 0;
+            }
+
+            .sidebar-brand span {
+                color: #6c8ebf;
+                font-size: 12px;
+            }
+
+        /* nav items */
+        .nav-label {
+            color: #6c757d;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 14px 18px 6px;
+        }
+
+        .sidebar a.nav-link-item {
+            color: #adb5bd;
+            text-decoration: none;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 8px;
+            margin: 2px 8px;
+            font-size: 14px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+            .sidebar a.nav-link-item:hover,
+            .sidebar a.nav-link-item.active {
+                background-color: #2d3548;
+                color: white;
+            }
+
+        /* Fee Collection accordion inside sidebar */
+        .sidebar-accordion-btn {
+            color: #adb5bd;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 8px;
+            margin: 2px 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            width: calc(100% - 16px);
+        }
+
+            .sidebar-accordion-btn:hover,
+            .sidebar-accordion-btn.open {
+                background-color: #2d3548;
+                color: white;
+            }
+
+            .sidebar-accordion-btn .chevron {
+                margin-left: auto;
+                transition: transform 0.2s;
+            }
+
+            .sidebar-accordion-btn.open .chevron {
+                transform: rotate(180deg);
+            }
+
+        .sidebar-sub-menu {
+            display: none;
+            padding-left: 16px;
+        }
+
+            .sidebar-sub-menu.show {
+                display: block;
+            }
+
+            .sidebar-sub-menu a.nav-link-item {
+                font-size: 13px;
+                padding: 8px 14px;
+            }
+
+        /* logout */
+        .sidebar-footer {
+            border-top: 1px solid #2d3548;
+            padding: 10px 8px;
+        }
+
+        /* ── Navbar ── */
+        .dashboard-navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        /* ── Sections ── */
+        .dashboard-section {
+            padding: 28px;
+        }
+
+        /* ── Add Student Form (reused styles) ── */
+        label {
+            width: 200px;
+        }
+
+        .heading {
+            width: 60%;
+            margin: 0 auto;
+            box-shadow: 0 5px 5px 1px rgba(0,0,0,0.15);
+            border-radius: 10px;
+            padding: 5px;
+            margin-top: 10px;
+            background: white;
+        }
+
+        .custom-button {
+            padding: 6px 16px;
+            border: 2px solid #0d6efd;
+            border-radius: 5px;
+            background: white;
+            color: #0d6efd;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .custom-button:hover {
+                background: #0d6efd;
+                color: white;
+            }
+
+        /* ── Student List Table ── */
+        .student-table, .student-table tr, .student-table td, .student-table th {
+            border: 1px solid #dee2e6;
+            border-collapse: collapse;
+            padding: 14px 18px;
+            text-align: center;
+        }
+
+        .student-table {
+            margin: 0 auto;
+            width: 95%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+            .student-table thead {
+                background: #f8f9fa;
+                font-weight: 600;
+                color: #495057;
+            }
+
+        .actionCst-btn {
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+
+        /* ── Fee Section Cards ── */
+        .fee-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .fee-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+            .fee-card-header h2 {
+                margin: 0;
+                font-size: 22px;
+                color: #212529;
+                font-weight: 700;
+            }
+
+            .fee-card-header p {
+                color: #6c757d;
+                font-size: 13px;
+                margin: 4px 0 0;
+            }
+
+        .fee-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .fee-badge-green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .fee-badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Receipt form fields */
+        .receipt-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+            .receipt-form-grid .form-label {
+                font-weight: 500;
+                font-size: 13px;
+                color: #495057;
+            }
+
+        /* ── Dashboard Welcome ── */
+        .welcome-banner {
+            background: linear-gradient(135deg, #1a1f2e 0%, #2d3e6b 100%);
+            border-radius: 16px;
+            padding: 36px 40px;
+            color: white;
+            margin-bottom: 28px;
+        }
+
+            .welcome-banner h2 {
+                font-size: 26px;
+                font-weight: 700;
+                margin-bottom: 6px;
+            }
+
+            .welcome-banner p {
+                color: #a0aec0;
+                font-size: 14px;
+            }
+
+        .stat-card {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+            .stat-card .icon-wrap {
+                width: 44px;
+                height: 44px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                margin-bottom: 14px;
+            }
+
+            .stat-card h3 {
+                font-size: 26px;
+                font-weight: 700;
+                margin: 0 0 4px;
+            }
+
+            .stat-card p {
+                font-size: 13px;
+                color: #6c757d;
+                margin: 0;
+            }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+
+        <!-- ════════════ SIDEBAR ════════════ -->
+        <div class="sidebar d-flex flex-column justify-content-between">
+
+            <div>
+                <div class="sidebar-brand">
+                    <h3><i class="bi bi-mortarboard-fill me-2" style="color:#6c8ebf"></i>Administration</h3>
+                    <span>Student ERP System</span>
+                </div>
+
+                <div class="nav-label">Main</div>
+
+                <a href="#" class="nav-link-item active" onclick="showSection('dashboard-section')">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+
+                <div class="nav-label">Students</div>
+
+                <a href="AddStudent.html" class="nav-link-item">
+                    <i class="bi bi-person-plus"></i> Add Student
+                </a>
+
+                <a href="#" class="nav-link-item" onclick="showSection('student-list-section')">
+                    <i class="bi bi-people"></i> Student List
+                </a>
+
+                <div class="nav-label">Finance</div>
+
+                <!-- Fee Collection accordion -->
+                <button class="sidebar-accordion-btn" id="feeAccordionBtn" onclick="toggleFeeMenu()">
+                    <i class="bi bi-cash-stack"></i>
+                    Fee Collection
+                    <i class="bi bi-chevron-down chevron"></i>
+                </button>
+
+                <div class="sidebar-sub-menu" id="feeSubMenu">
+                    <a href="#" class="nav-link-item" onclick="showSection('fee-receipts-section')">
+                        <i class="bi bi-receipt"></i> Fee Receipts
+                    </a>
+                    <a href="#" class="nav-link-item" onclick="showSection('cancel-receipts-section')">
+                        <i class="bi bi-x-circle"></i> Cancel Receipts
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="../index.html" class="nav-link-item">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Home
+                </a>
+                <a href="#" class="nav-link-item" onclick="logoutBtnFunctionality()">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- ════════════ MAIN AREA ════════════ -->
+        <div class="flex-grow-1 d-flex flex-column" style="min-height:100vh; overflow-y:auto">
+
+            <!-- Navbar -->
+            <nav class="navbar dashboard-navbar px-4 py-3">
+                <div class="container-fluid p-0 d-flex justify-content-between align-items-center">
+                    <span id="navSectionTitle" class="fw-semibold text-dark">Dashboard</span>
+                    <span class="text-muted" style="font-size:14px">
+                        <i class="bi bi-person-circle me-1"></i> Welcome, Administration
+                    </span>
+                </div>
+            </nav>
+
+            <!-- ─── DASHBOARD SECTION ─── -->
+            <div class="dashboard-section" id="dashboard-section">
+                <div class="welcome-banner">
+                    <h2>Welcome to Administration Panel</h2>
+                    <p>Manage students, fees, and receipts from one place.</p>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="icon-wrap" style="background:#e7f1ff; color:#0d6efd"><i class="bi bi-people-fill"></i></div>
+                            <h3 id="stat-students">—</h3>
+                            <p>Total Students</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="icon-wrap" style="background:#d1fae5; color:#065f46"><i class="bi bi-receipt-cutoff"></i></div>
+                            <h3 id="stat-receipts">—</h3>
+                            <p>Fee Receipts</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="icon-wrap" style="background:#fee2e2; color:#991b1b"><i class="bi bi-x-circle-fill"></i></div>
+                            <h3 id="stat-cancelled">—</h3>
+                            <p>Cancelled Receipts</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="icon-wrap" style="background:#fef9c3; color:#92400e"><i class="bi bi-cash-coin"></i></div>
+                            <h3 id="stat-collected">—</h3>
+                            <p>Total Collected (₹)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── ADD STUDENT SECTION ─── -->
+            <div class="dashboard-section visually-hidden" id="add-student-section">
+
+                <h1 style="text-align:center" class="my-3 heading">Student Registration Form</h1>
+
+                <ul class="nav nav-tabs mt-4" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="personal-info-tab" data-bs-toggle="tab" data-bs-target="#p-info-tab-pane" type="button" role="tab" aria-controls="p-info-tab-pane" aria-selected="true">Personal Information</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="parent-details-tab" data-bs-toggle="tab" data-bs-target="#parent-details-tab-pane" type="button" role="tab" aria-controls="parent-details-tab-pane" aria-selected="false">Parent Details</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="address-tab" data-bs-toggle="tab" data-bs-target="#address-tab-pane" type="button" role="tab" aria-controls="address-tab-pane" aria-selected="false">Address Details</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="acad-details-tab" data-bs-toggle="tab" data-bs-target="#acad-details-tab-pane" type="button" role="tab" aria-controls="acad-details-tab-pane" aria-selected="false">Academic Details</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+
+                    <!-- Personal Info -->
+                    <div class="tab-pane fade show active" id="p-info-tab-pane" role="tabpanel" aria-labelledby="personal-info-tab" tabindex="0">
+                        <div class="card p-4 m-3">
+                            <div class="row mb-3">
+                                <label for="sname" class="col-sm-2 col-form-label">Student Name</label>
+                                <div class="col-sm-10"><input id="sname" type="text" class="form-control"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="sdob" class="col-sm-2 col-form-label">Date of Birth</label>
+                                <div class="col-sm-10"><input id="sdob" type="date" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Contact Number</label>
+                                <div class="col-sm-10">
+                                    <div id="contactContainer">
+                                        <div class="mb-2 contact-row d-flex gap-2">
+                                            <input type="text" class="form-control contact-number" placeholder="Enter Contact Number" maxlength="10">
+                                            <button type="button" class="btn btn-success" onclick="addContact()">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label">Gender</label>
+                                <div class="col-sm-10 d-flex align-items-center gap-3">
+                                    <div><input id="sgender-m" type="radio" name="sgender" value="Male" /> <label for="sgender-m" style="width:auto">Male</label></div>
+                                    <div><input id="sgender-f" type="radio" name="sgender" value="Female" /> <label for="sgender-f" style="width:auto">Female</label></div>
+                                    <div><input id="sgender-o" type="radio" name="sgender" value="Other" /> <label for="sgender-o" style="width:auto">Other</label></div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="sbloodGrp" class="col-sm-2 col-form-label">Blood Group</label>
+                                <div class="col-sm-10"><input id="sbloodGrp" type="text" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="sPhotoUpload" class="col-sm-2 col-form-label">Upload Image</label>
+                                <div class="col-sm-10"><input id="sPhotoUpload" type="file" accept="image/*" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3 d-none" id="studentImagePreviewContainer">
+                                <label class="col-sm-2 col-form-label">Current Image</label>
+                                <div class="col-sm-10">
+                                    <img id="studentImagePreview" src="" alt="Student Image" class="img-thumbnail" style="width:150px; height:150px; object-fit:cover;" />
+                                </div>
+                            </div>
+                            <div class="row mb-3 d-flex justify-content-end">
+                                <button class="custom-button" onclick="switchTab('parent-details-tab')">Next</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Parent Details -->
+                    <div class="tab-pane fade" id="parent-details-tab-pane" role="tabpanel" aria-labelledby="parent-details-tab" tabindex="0">
+                        <div class="card p-4 m-3">
+                            <div class="row mb-3">
+                                <label for="fname" class="col-sm-2 col-form-label">Father Name</label>
+                                <div class="col-sm-10"><input id="fname" type="text" class="form-control"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="mname" class="col-sm-2 col-form-label">Mother Name</label>
+                                <div class="col-sm-10"><input id="mname" type="text" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="gcontact1" class="col-sm-2 col-form-label">Contact Number</label>
+                                <div class="col-sm-10"><input id="gcontact1" type="text" class="form-control" placeholder="Enter 10 digit phone number" maxlength="10" /></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="gcontact2" class="col-sm-2 col-form-label">Alternate Contact</label>
+                                <div class="col-sm-10"><input id="gcontact2" type="text" class="form-control" placeholder="Enter 10 digit phone number" maxlength="10" /></div>
+                            </div>
+                            <div class="row mb-3 d-flex justify-content-between">
+                                <button class="custom-button" onclick="switchTab('personal-info-tab')">Previous</button>
+                                <button class="custom-button" onclick="switchTab('address-tab')">Next</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address Details -->
+                    <div class="tab-pane fade" id="address-tab-pane" role="tabpanel" aria-labelledby="address-tab" tabindex="0">
+                        <div class="card p-4 m-3">
+                            <div class="row mb-3">
+                                <label for="address" class="col-sm-2 col-form-label">Address</label>
+                                <div class="col-sm-10"><input id="address" type="text" class="form-control"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="city" class="col-sm-2 col-form-label">City</label>
+                                <div class="col-sm-10"><input id="city" type="text" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="state" class="col-sm-2 col-form-label">State</label>
+                                <div class="col-sm-10"><input id="state" type="text" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="pincode" class="col-sm-2 col-form-label">Pincode</label>
+                                <div class="col-sm-10"><input id="pincode" type="number" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3 d-flex justify-content-between">
+                                <button class="custom-button" onclick="switchTab('parent-details-tab')">Previous</button>
+                                <button class="custom-button" onclick="switchTab('acad-details-tab')">Next</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Academic Details -->
+                    <div class="tab-pane fade" id="acad-details-tab-pane" role="tabpanel" aria-labelledby="acad-details-tab" tabindex="0">
+                        <div class="card p-4 m-3">
+                            <div class="row mb-3 align-items-center">
+                                <div class="col-md-2"><label for="10thPerctg" class="col-form-label">10th Percentage</label></div>
+                                <div class="col-md-4"><input id="10thPerctg" type="number" class="form-control"></div>
+                                <div class="col-md-2"><label for="12thPerctg" class="col-form-label">12th Percentage</label></div>
+                                <div class="col-md-4"><input id="12thPerctg" type="number" class="form-control"></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="jeeRank" class="col-sm-2 col-form-label">JEE All India Rank</label>
+                                <div class="col-sm-10"><input id="jeeRank" type="number" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="schoolName" class="col-sm-2 col-form-label">School / Junior College Name</label>
+                                <div class="col-sm-10"><input id="schoolName" type="text" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="gapYrs" class="col-sm-2 col-form-label">Gap Years (if any)</label>
+                                <div class="col-sm-10"><input id="gapYrs" type="number" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="gapYrJustification" class="col-sm-2 col-form-label">Gap Year Justification</label>
+                                <div class="col-sm-10"><input id="gapYrJustification" type="text" class="form-control" /></div>
+                            </div>
+                            <div class="row mb-3 d-flex justify-content-between">
+                                <button class="custom-button" onclick="switchTab('address-tab')">Previous</button>
+                                <button class="custom-button" onclick="SubmitStudentDetails()">Submit</button>
+                            </div>
+                            <input type="hidden" id="HiddenStudentId" value="" />
+                            <input type="hidden" id="existingImage" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ─── STUDENT LIST SECTION ─── -->
+            <div class="dashboard-section visually-hidden" id="student-list-section">
+                <h1 style="text-align:center" class="mb-4">Students List</h1>
+                <div class="d-flex justify-content-around my-4 flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <label style="width:fit-content">From Date</label>
+                        <input type="date" id="fromDate" class="form-control" style="width:180px" />
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <label style="width:fit-content">To Date</label>
+                        <input type="date" id="toDate" class="form-control" style="width:180px" />
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <label style="width:fit-content">Name/Email/Mob</label>
+                        <input type="text" id="searchBox" class="form-control" style="width:200px" />
+                        <button class="btn btn-primary btn-sm" onclick="searchStudent()">Search</button>
+                    </div>
+                </div>
+                <table class="student-table mb-3">
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>Name</th>
+                            <th>Father's Name</th>
+                            <th>Mother's Name</th>
+                            <th>Student Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-table-body"></tbody>
+                </table>
+            </div>
+
+            <!-- ─── FEE RECEIPTS SECTION ─── -->
+            <div class="dashboard-section visually-hidden" id="fee-receipts-section">
+                <div class="fee-card">
+                    <div class="fee-card-header">
+                        <div>
+                            <h2><i class="bi bi-receipt me-2 text-success"></i>Fee Receipts</h2>
+                            <p>Generate and manage student fee receipts</p>
+                        </div>
+                        <span class="fee-badge fee-badge-green">Active</span>
+                    </div>
+
+                    <!-- Search Student -->
+                    <div class="row g-3 mb-4 align-items-end">
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Student Name / Roll No.</label>
+                            <input type="text" id="feeStudentSearch" class="form-control form-control-lg" placeholder="Search student by name or roll number">
+                        </div>
+                        <div class="col-md-4 d-grid">
+                            <button class="btn btn-primary btn-lg" onclick="searchStudentForFee()">
+                                <i class="bi bi-search me-2"></i>Search Student
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Receipt Form -->
+                    <div id="feeReceiptForm" class="d-none">
+                        <hr class="mb-4">
+                        <h5 class="mb-3 text-muted">Receipt Details</h5>
+                        <div class="receipt-form-grid">
+                            <div>
+                                <label class="form-label fw-semibold">Student Name</label>
+                                <input type="text" id="receiptStudentName" class="form-control" readonly>
+                            </div>
+                            <div>
+                                <label class="form-label fw-semibold">Receipt Date</label>
+                                <input type="date" id="receiptDate" class="form-control">
+                            </div>
+                            <div>
+                                <label class="form-label fw-semibold">Fee Type</label>
+                                <select id="feeType" class="form-select">
+                                    <option value="">-- Select Fee Type --</option>
+                                    <option value="tuition">Tuition Fee</option>
+                                    <option value="exam">Exam Fee</option>
+                                    <option value="library">Library Fee</option>
+                                    <option value="lab">Lab Fee</option>
+                                    <option value="hostel">Hostel Fee</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label fw-semibold">Amount (₹)</label>
+                                <input type="number" id="feeAmount" class="form-control" placeholder="Enter amount">
+                            </div>
+                            <div>
+                                <label class="form-label fw-semibold">Payment Mode</label>
+                                <select id="paymentMode" class="form-select">
+                                    <option value="">-- Select Mode --</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="upi">UPI</option>
+                                    <option value="neft">NEFT / RTGS</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="dd">Demand Draft</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label fw-semibold">Transaction / Ref. No.</label>
+                                <input type="text" id="transactionRef" class="form-control" placeholder="Enter reference number">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Remarks</label>
+                            <textarea id="feeRemarks" class="form-control" rows="2" placeholder="Optional remarks..."></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button class="btn btn-outline-secondary" onclick="clearFeeForm()">
+                                <i class="bi bi-x-circle me-1"></i>Clear
+                            </button>
+                            <button class="btn btn-success" onclick="generateFeeReceipt()">
+                                <i class="bi bi-check-circle-fill me-1"></i>Generate Receipt
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Receipts Table -->
+                    <hr class="my-4">
+                    <h5 class="mb-3 text-muted">Recent Receipts</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Receipt No.</th>
+                                    <th>Student Name</th>
+                                    <th>Fee Type</th>
+                                    <th>Amount (₹)</th>
+                                    <th>Payment Mode</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feeReceiptsTableBody">
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">No receipts found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── CANCEL RECEIPTS SECTION ─── -->
+            <div class="dashboard-section visually-hidden" id="cancel-receipts-section">
+                <div class="fee-card">
+                    <div class="fee-card-header">
+                        <div>
+                            <h2><i class="bi bi-x-circle me-2 text-danger"></i>Cancel Receipts</h2>
+                            <p>Search and cancel previously generated fee receipts</p>
+                        </div>
+                        <span class="fee-badge fee-badge-red">Cancellation</span>
+                    </div>
+
+                    <!-- Search Receipt -->
+                    <div class="row g-3 mb-4 align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Receipt Number</label>
+                            <input type="text" id="cancelReceiptNo" class="form-control form-control-lg" placeholder="Enter receipt number">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Or Search by Student</label>
+                            <input type="text" id="cancelStudentName" class="form-control form-control-lg" placeholder="Student name">
+                        </div>
+                        <div class="col-md-3 d-grid">
+                            <button class="btn btn-danger btn-lg" onclick="searchReceiptToCancel()">
+                                <i class="bi bi-search me-2"></i>Search Receipt
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cancellation Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Receipt No.</th>
+                                    <th>Student Name</th>
+                                    <th>Fee Type</th>
+                                    <th>Amount (₹)</th>
+                                    <th>Payment Mode</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cancelReceiptsTableBody">
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">Search for a receipt to cancel</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Cancelled Receipts Log -->
+                    <hr class="my-4">
+                    <h5 class="mb-3 text-muted">Cancelled Receipts Log</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Receipt No.</th>
+                                    <th>Student Name</th>
+                                    <th>Amount (₹)</th>
+                                    <th>Cancelled On</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cancelledLogTableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">No cancelled receipts</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- end main area -->
+    </div><!-- end d-flex -->
+    <!-- Cancel Receipt Modal -->
+    <div class="modal fade" id="cancelReceiptModal" tabindex="-1" aria-labelledby="cancelReceiptModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="cancelReceiptModalLabel"><i class="bi bi-exclamation-triangle me-2"></i>Cancel Receipt</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to cancel receipt <strong id="cancelReceiptNoDisplay"></strong>?</p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Reason for Cancellation</label>
+                        <textarea id="cancelReason" class="form-control" rows="3" placeholder="Enter reason..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmCancelReceipt()">Confirm Cancellation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../../js/api.js"></script>
+    <script src="Js/Administration.js"></script>
+
+    <script>
+    // ── Section switcher ──────────────────────────────────────
+    const sectionTitles = {
+        'dashboard-section':       'Dashboard',
+        'add-student-section':     'Add Student',
+        'student-list-section':    'Student List',
+        'fee-receipts-section':    'Fee Collection › Fee Receipts',
+        'cancel-receipts-section': 'Fee Collection › Cancel Receipts',
+    };
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.dashboard-section').forEach(s => s.classList.add('visually-hidden'));
+        document.getElementById(sectionId).classList.remove('visually-hidden');
+
+        // Update navbar title
+        document.getElementById('navSectionTitle').textContent = sectionTitles[sectionId] || '';
+
+        // Update active sidebar link
+        document.querySelectorAll('.nav-link-item').forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`.nav-link-item[onclick*="${sectionId}"]`);
+        if (active) active.classList.add('active');
+    }
+
+    // ── Fee accordion toggle ──────────────────────────────────
+    function toggleFeeMenu() {
+        const btn = document.getElementById('feeAccordionBtn');
+        const menu = document.getElementById('feeSubMenu');
+        btn.classList.toggle('open');
+        menu.classList.toggle('show');
+    }
+
+    // Auto-open fee menu when on a fee section
+    function autoOpenFeeMenu(sectionId) {
+        if (sectionId === 'fee-receipts-section' || sectionId === 'cancel-receipts-section') {
+            document.getElementById('feeAccordionBtn').classList.add('open');
+            document.getElementById('feeSubMenu').classList.add('show');
+        }
+    }
+
+    // Override showSection to also handle fee menu
+    const _origShow = showSection;
+    function showSection(id) { _origShow(id); autoOpenFeeMenu(id); }
+
+    // ── Tab switcher (Add Student form) ──────────────────────
+    function switchTab(tabId) {
+        const tab = document.getElementById(tabId);
+        if (tab) bootstrap.Tab.getOrCreateInstance(tab).show();
+    }
+
+    // ── Add contact row ──────────────────────────────────────
+    function addContact() {
+        const container = document.getElementById('contactContainer');
+        const div = document.createElement('div');
+        div.className = 'mb-2 contact-row d-flex gap-2';
+        div.innerHTML = `
+            <input type="text" class="form-control contact-number" placeholder="Enter Contact Number" maxlength="10">
+            <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">−</button>`;
+        container.appendChild(div);
+    }
+
+    // ── Fee Receipt helpers ──────────────────────────────────
+    function searchStudentForFee() {
+        const query = document.getElementById('feeStudentSearch').value.trim();
+        if (!query) { iziToast.warning({ title: 'Warning', message: 'Enter student name or roll number' }); return; }
+        // TODO: wire to your API — for now just reveal the form
+        document.getElementById('feeReceiptForm').classList.remove('d-none');
+        document.getElementById('receiptStudentName').value = query;
+        document.getElementById('receiptDate').value = new Date().toISOString().split('T')[0];
+    }
+
+    function clearFeeForm() {
+        ['receiptStudentName','receiptDate','feeType','feeAmount','paymentMode','transactionRef','feeRemarks']
+            .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+        document.getElementById('feeReceiptForm').classList.add('d-none');
+    }
+
+    function generateFeeReceipt() {
+        // TODO: wire to your API
+        iziToast.success({ title: 'Success', message: 'Receipt generated successfully!' });
+    }
+
+    // ── Cancel Receipt helpers ───────────────────────────────
+    let receiptToCancel = null;
+
+    function searchReceiptToCancel() {
+        // TODO: wire to your API
+        iziToast.info({ title: 'Info', message: 'Search wired to API — implement in Administration.js' });
+    }
+
+    function openCancelModal(receiptNo) {
+        receiptToCancel = receiptNo;
+        document.getElementById('cancelReceiptNoDisplay').textContent = receiptNo;
+        new bootstrap.Modal(document.getElementById('cancelReceiptModal')).show();
+    }
+
+    /*
+    function confirmCancelReceipt() {
+        const reason = document.getElementById('cancelReason').value.trim();
+        if (!reason) { iziToast.warning({ title: 'Warning', message: 'Please enter a reason' }); return; }
+        // TODO: wire to your API
+        bootstrap.Modal.getInstance(document.getElementById('cancelReceiptModal')).hide();
+        iziToast.success({ title: 'Cancelled', message: `Receipt ${receiptToCancel} cancelled.` });
+    }
+    */
+
+    // ── Logout ───────────────────────────────────────────────
+    function logoutBtnFunctionality() {
+        // TODO: clear session / token
+        window.location.href = '../index.html';
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduCore ERP — Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="admin-layout.css" />
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.4rem 1.5rem;
+            transition: border-color .2s, transform .2s;
+            animation: fadeUp .4s ease both;
+        }
+
+            .stat-card:nth-child(2) {
+                animation-delay: .05s;
+            }
+
+            .stat-card:nth-child(3) {
+                animation-delay: .1s;
+            }
+
+            .stat-card:nth-child(4) {
+                animation-delay: .15s;
+            }
+
+            .stat-card:hover {
+                border-color: var(--accent);
+                transform: translateY(-3px);
+            }
+
+        .stat-icon {
+            font-size: 1.6rem;
+            margin-bottom: .8rem;
+        }
+
+        .stat-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -.03em;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: .85rem;
+            margin-top: .2rem;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            padding: .9rem 1.2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: .9rem;
+            font-weight: 500;
+            transition: all .2s;
+            cursor: pointer;
+        }
+
+            .action-btn:hover {
+                background: var(--surface2);
+                border-color: var(--accent);
+                color: var(--accent);
+            }
+
+            .action-btn .a-icon {
+                font-size: 1.1rem;
+            }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+            .section-title::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--border);
+            }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            <a href="../dashboard.html" class="brand">
+                <div class="brand-icon">🎓</div>
+                <div class="brand-name">Edu<span>Core</span></div>
+            </a>
+            <span class="panel-badge">Admin Panel</span>
+        </div>
+        <div class="topbar-right">
+            <button class="topbar-icon-btn" title="Notifications">🔔</button>
+            <button class="topbar-icon-btn" title="Settings">⚙️</button>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Overview</div>
+                <a href="index.html" class="sidebar-link active"><span class="icon">🏠</span> Dashboard</a>
+            </div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Academics</div>
+                <a href="class-section.html" class="sidebar-link"><span class="icon">🏫</span> Class Section</a>
+                <a href="subject-section.html" class="sidebar-link"><span class="icon">📚</span> Subject Section</a>
+            </div>
+            <div class="sidebar-bottom">
+                <a href="../dashboard.html" class="sidebar-back">← Back to Home</a>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main-content" id="mainContent">
+            <div class="page-heading">
+                <div class="breadcrumb"><a href="../dashboard.html">Home</a> / <span>Admin Dashboard</span></div>
+                <h1>Admin Dashboard</h1>
+                <p>Overview of your school's key metrics</p>
+            </div>
+
+            <h2 class="section-title">At a Glance</h2>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon">🏫</div><div class="stat-num">24</div><div class="stat-label">Class Sections</div></div>
+                <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-num">68</div><div class="stat-label">Subjects</div></div>
+                <div class="stat-card"><div class="stat-icon">👨‍🏫</div><div class="stat-num">142</div><div class="stat-label">Teachers</div></div>
+                <div class="stat-card"><div class="stat-icon">🎒</div><div class="stat-num">1,840</div><div class="stat-label">Students</div></div>
+            </div>
+
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="quick-actions">
+                <a href="class-section.html" class="action-btn"><span class="a-icon">🏫</span> Manage Classes</a>
+                <a href="subject-section.html" class="action-btn"><span class="a-icon">📚</span> Manage Subjects</a>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin-layout.js"></script>
+</body>
+</html>

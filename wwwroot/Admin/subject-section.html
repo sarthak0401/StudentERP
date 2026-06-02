@@ -1,0 +1,578 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduCore ERP — Subject Section</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="admin-layout.css" />
+    <style>
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .55rem 1rem;
+            flex: 1;
+            max-width: 320px;
+            transition: border-color .2s;
+        }
+
+            .search-box:focus-within {
+                border-color: var(--accent);
+            }
+
+            .search-box input {
+                background: none;
+                border: none;
+                outline: none;
+                color: var(--text);
+                font-family: 'DM Sans', sans-serif;
+                font-size: .9rem;
+                width: 100%;
+            }
+
+                .search-box input::placeholder {
+                    color: var(--muted);
+                }
+
+        .btn {
+            padding: .6rem 1.3rem;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .875rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+            .btn-primary:hover {
+                opacity: .88;
+            }
+
+        .btn-ghost {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+            .btn-ghost:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+            }
+
+        .filter-chips {
+            display: flex;
+            gap: .5rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            padding: .35rem .9rem;
+            border-radius: 20px;
+            font-size: .8rem;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+            .chip.active, .chip:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+                background: rgba(59,130,246,.08);
+            }
+
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            padding: .9rem 1.2rem;
+            text-align: left;
+            font-size: .75rem;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+        }
+
+            tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            tbody tr:hover {
+                background: var(--surface2);
+            }
+
+        tbody td {
+            padding: .9rem 1.2rem;
+            font-size: .9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .25rem .7rem;
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+
+        .badge-green {
+            background: rgba(34,197,94,.12);
+            color: #22c55e;
+        }
+
+        .badge-blue {
+            background: rgba(59,130,246,.12);
+            color: var(--accent);
+        }
+
+        .badge-teal {
+            background: rgba(6,182,212,.12);
+            color: var(--accent2);
+        }
+
+        .badge-amber {
+            background: rgba(245,158,11,.12);
+            color: #f59e0b;
+        }
+
+        .badge-purple {
+            background: rgba(167,139,250,.12);
+            color: #a78bfa;
+        }
+
+        .row-actions {
+            display: flex;
+            gap: .5rem;
+        }
+
+        .action-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: none;
+            color: var(--muted);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: .9rem;
+            transition: all .2s;
+        }
+
+            .action-icon.edit:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+                background: rgba(59,130,246,.1);
+            }
+
+            .action-icon.del:hover {
+                border-color: var(--red);
+                color: var(--red);
+                background: rgba(248,113,113,.1);
+            }
+
+        code.subcode {
+            background: var(--bg);
+            padding: .2rem .5rem;
+            border-radius: 5px;
+            font-size: .8rem;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.6);
+            backdrop-filter: blur(4px);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .modal-overlay.open {
+                display: flex;
+            }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 460px;
+            animation: fadeUp .25s ease;
+        }
+
+            .modal h3 {
+                font-family: 'Syne', sans-serif;
+                font-size: 1.2rem;
+                font-weight: 700;
+                margin-bottom: 1.5rem;
+            }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-field {
+            margin-bottom: 1.2rem;
+        }
+
+            .form-field label {
+                display: block;
+                font-size: .8rem;
+                color: var(--muted);
+                margin-bottom: .4rem;
+                font-weight: 500;
+                letter-spacing: .04em;
+                text-transform: uppercase;
+            }
+
+            .form-field input, .form-field select {
+                width: 100%;
+                padding: .75rem 1rem;
+                background: var(--bg);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                color: var(--text);
+                font-family: 'DM Sans', sans-serif;
+                font-size: .9rem;
+                outline: none;
+                transition: border-color .2s;
+            }
+
+                .form-field input:focus, .form-field select:focus {
+                    border-color: var(--accent);
+                }
+
+                .form-field select option {
+                    background: var(--surface);
+                }
+
+        .modal-actions {
+            display: flex;
+            gap: .75rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+            .empty-state .e-icon {
+                font-size: 2.5rem;
+                margin-bottom: .8rem;
+            }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .9rem 1.2rem;
+            border-top: 1px solid var(--border);
+            font-size: .85rem;
+            color: var(--muted);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            <a href="../dashboard.html" class="brand">
+                <div class="brand-icon">🎓</div>
+                <div class="brand-name">Edu<span>Core</span></div>
+            </a>
+            <span class="panel-badge">Admin Panel</span>
+        </div>
+        <div class="topbar-right">
+            <button class="topbar-icon-btn">🔔</button>
+            <button class="topbar-icon-btn">⚙️</button>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Overview</div>
+                <a href="index.html" class="sidebar-link"><span class="icon">🏠</span> Dashboard</a>
+            </div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Academics</div>
+                <a href="class-section.html" class="sidebar-link"><span class="icon">🏫</span> Class Section</a>
+                <a href="subject-section.html" class="sidebar-link active"><span class="icon">📚</span> Subject Section</a>
+            </div>
+            <div class="sidebar-bottom">
+                <a href="../dashboard.html" class="sidebar-back">← Back to Home</a>
+            </div>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div class="page-heading">
+                <div class="breadcrumb"><a href="../dashboard.html">Home</a> / <a href="index.html">Admin</a> / <span>Subject Section</span></div>
+                <h1>Subject Section</h1>
+                <p>Manage subjects assigned across class sections</p>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <span>🔍</span>
+                    <input type="text" placeholder="Search subjects..." id="searchInput" oninput="filterTable()" />
+                </div>
+                <div style="display:flex;gap:.7rem;">
+                    <button class="btn btn-ghost">⬇ Export</button>
+                    <button class="btn btn-primary" onclick="openModal()">+ Add Subject</button>
+                </div>
+            </div>
+
+            <div class="filter-chips" id="filterChips">
+                <span class="chip active" onclick="setFilter(this,'all')">All</span>
+                <span class="chip" onclick="setFilter(this,'Science')">Science</span>
+                <span class="chip" onclick="setFilter(this,'Mathematics')">Mathematics</span>
+                <span class="chip" onclick="setFilter(this,'Languages')">Languages</span>
+                <span class="chip" onclick="setFilter(this,'Social')">Social Studies</span>
+                <span class="chip" onclick="setFilter(this,'Arts')">Arts</span>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>Subject Name</th><th>Code</th><th>Category</th><th>Assigned Class</th><th>Credits</th><th>Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display:none">
+                    <div class="e-icon">📚</div>
+                    <p>No subjects found. Add your first subject!</p>
+                </div>
+                <div class="pagination">
+                    <span id="paginationInfo">Showing 0 results</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3 id="modalTitle">Add Subject</h3>
+            <div class="form-row">
+                <div class="form-field">
+                    <label>Subject Name</label>
+                    <input type="text" id="subjectName" placeholder="e.g. Physics" />
+                </div>
+                <div class="form-field">
+                    <label>Subject Code</label>
+                    <input type="text" id="subjectCode" placeholder="e.g. PHY101" />
+                </div>
+            </div>
+            <div class="form-field">
+                <label>Category</label>
+                <select id="category">
+                    <option value="Science">Science</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Languages">Languages</option>
+                    <option value="Social">Social Studies</option>
+                    <option value="Arts">Arts</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label>Assigned Class Section</label>
+                <select id="assignedClass">
+                    <option>Grade 9 - A</option>
+                    <option>Grade 10 - A</option>
+                    <option>Grade 10 - B</option>
+                    <option>Grade 11 - A</option>
+                    <option>Grade 11 - B</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label>Credits / Hours</label>
+                    <input type="number" id="credits" placeholder="e.g. 4" min="1" max="10" />
+                </div>
+                <div class="form-field">
+                    <label>Status</label>
+                    <select id="statusField">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSubject()">Save Subject</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-layout.js"></script>
+    <script>
+        const catBadge = { Science:'badge-teal', Mathematics:'badge-blue', Languages:'badge-purple', Social:'badge-amber', Arts:'badge-green' };
+        let data = [
+            { id:1, name:'Physics',     code:'PHY101', category:'Science',     assignedClass:'Grade 10 - A', credits:4, status:'Active' },
+            { id:2, name:'Chemistry',   code:'CHE101', category:'Science',     assignedClass:'Grade 10 - B', credits:4, status:'Active' },
+            { id:3, name:'Mathematics', code:'MAT101', category:'Mathematics', assignedClass:'Grade 9 - A',  credits:5, status:'Active' },
+            { id:4, name:'English',     code:'ENG101', category:'Languages',   assignedClass:'Grade 11 - A', credits:3, status:'Active' },
+            { id:5, name:'History',     code:'HIS101', category:'Social',      assignedClass:'Grade 11 - B', credits:3, status:'Inactive' },
+            { id:6, name:'Visual Arts', code:'ART101', category:'Arts',        assignedClass:'Grade 9 - A',  credits:2, status:'Active' },
+        ];
+        let activeFilter = 'all';
+        let editingId = null;
+
+        function renderTable(rows) {
+            const tbody = document.getElementById('tableBody');
+            const empty = document.getElementById('emptyState');
+            document.getElementById('paginationInfo').textContent = `Showing ${rows.length} result${rows.length !== 1 ? 's' : ''}`;
+            if (!rows.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            tbody.innerHTML = rows.map((r, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td><strong>${r.name}</strong></td>
+                    <td><code class="subcode">${r.code}</code></td>
+                    <td><span class="badge ${catBadge[r.category] || 'badge-blue'}">${r.category}</span></td>
+                    <td>${r.assignedClass}</td>
+                    <td>${r.credits}</td>
+                    <td><span class="badge ${r.status === 'Active' ? 'badge-green' : 'badge-amber'}">${r.status}</span></td>
+                    <td><div class="row-actions">
+                        <button class="action-icon edit" onclick="editRow(${r.id})">✏️</button>
+                        <button class="action-icon del"  onclick="deleteRow(${r.id})">🗑️</button>
+                    </div></td>
+                </tr>`).join('');
+        }
+
+        function getFiltered() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            return data.filter(r =>
+                (activeFilter === 'all' || r.category === activeFilter) &&
+                (r.name.toLowerCase().includes(q) || r.code.toLowerCase().includes(q))
+            );
+        }
+
+        function filterTable() { renderTable(getFiltered()); }
+
+        function setFilter(el, val) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            activeFilter = val;
+            filterTable();
+        }
+
+        function openModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Add Subject';
+            ['subjectName','subjectCode','credits'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('category').value = 'Science';
+            document.getElementById('assignedClass').value = 'Grade 10 - A';
+            document.getElementById('statusField').value = 'Active';
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+        function saveSubject() {
+            const name          = document.getElementById('subjectName').value.trim();
+            const code          = document.getElementById('subjectCode').value.trim();
+            const category      = document.getElementById('category').value;
+            const assignedClass = document.getElementById('assignedClass').value;
+            const credits       = parseInt(document.getElementById('credits').value);
+            const status        = document.getElementById('statusField').value;
+            if (!name || !code || !credits) { alert('Please fill all required fields.'); return; }
+
+            if (editingId !== null) {
+                const idx = data.findIndex(x => x.id === editingId);
+                if (idx > -1) data[idx] = { id: editingId, name, code, category, assignedClass, credits, status };
+            } else {
+                data.push({ id: Date.now(), name, code, category, assignedClass, credits, status });
+            }
+            closeModal();
+            filterTable();
+        }
+
+        function editRow(id) {
+            const r = data.find(x => x.id === id);
+            if (!r) return;
+            editingId = r.id;
+            document.getElementById('modalTitle').textContent = 'Edit Subject';
+            document.getElementById('subjectName').value = r.name;
+            document.getElementById('subjectCode').value = r.code;
+            document.getElementById('category').value = r.category;
+            document.getElementById('assignedClass').value = r.assignedClass;
+            document.getElementById('credits').value = r.credits;
+            document.getElementById('statusField').value = r.status;
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function deleteRow(id) {
+            if (!confirm('Delete this subject?')) return;
+            data = data.filter(x => x.id !== id);
+            filterTable();
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+        renderTable(data);
+    </script>
+</body>
+</html>

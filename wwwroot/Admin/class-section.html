@@ -1,0 +1,507 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduCore ERP — Class Section</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="admin-layout.css" />
+    <style>
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .55rem 1rem;
+            flex: 1;
+            max-width: 320px;
+            transition: border-color .2s;
+        }
+
+            .search-box:focus-within {
+                border-color: var(--accent);
+            }
+
+            .search-box input {
+                background: none;
+                border: none;
+                outline: none;
+                color: var(--text);
+                font-family: 'DM Sans', sans-serif;
+                font-size: .9rem;
+                width: 100%;
+            }
+
+                .search-box input::placeholder {
+                    color: var(--muted);
+                }
+
+        .btn {
+            padding: .6rem 1.3rem;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .875rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+            .btn-primary:hover {
+                opacity: .88;
+            }
+
+        .btn-ghost {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+            .btn-ghost:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+            }
+
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            padding: .9rem 1.2rem;
+            text-align: left;
+            font-size: .75rem;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+        }
+
+            tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            tbody tr:hover {
+                background: var(--surface2);
+            }
+
+        tbody td {
+            padding: .9rem 1.2rem;
+            font-size: .9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .25rem .7rem;
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+
+        .badge-green {
+            background: rgba(34,197,94,.12);
+            color: #22c55e;
+        }
+
+        .badge-amber {
+            background: rgba(245,158,11,.12);
+            color: #f59e0b;
+        }
+
+        .badge-blue {
+            background: rgba(59,130,246,.12);
+            color: var(--accent);
+        }
+
+        .row-actions {
+            display: flex;
+            gap: .5rem;
+        }
+
+        .action-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: none;
+            color: var(--muted);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: .9rem;
+            transition: all .2s;
+        }
+
+            .action-icon.edit:hover {
+                border-color: var(--accent);
+                color: var(--accent);
+                background: rgba(59,130,246,.1);
+            }
+
+            .action-icon.del:hover {
+                border-color: var(--red);
+                color: var(--red);
+                background: rgba(248,113,113,.1);
+            }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.6);
+            backdrop-filter: blur(4px);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .modal-overlay.open {
+                display: flex;
+            }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 440px;
+            animation: fadeUp .25s ease;
+        }
+
+            .modal h3 {
+                font-family: 'Syne', sans-serif;
+                font-size: 1.2rem;
+                font-weight: 700;
+                margin-bottom: 1.5rem;
+            }
+
+        .form-field {
+            margin-bottom: 1.2rem;
+        }
+
+            .form-field label {
+                display: block;
+                font-size: .8rem;
+                color: var(--muted);
+                margin-bottom: .4rem;
+                font-weight: 500;
+                letter-spacing: .04em;
+                text-transform: uppercase;
+            }
+
+            .form-field input, .form-field select {
+                width: 100%;
+                padding: .75rem 1rem;
+                background: var(--bg);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                color: var(--text);
+                font-family: 'DM Sans', sans-serif;
+                font-size: .9rem;
+                outline: none;
+                transition: border-color .2s;
+            }
+
+                .form-field input:focus, .form-field select:focus {
+                    border-color: var(--accent);
+                }
+
+                .form-field select option {
+                    background: var(--surface);
+                }
+
+        .modal-actions {
+            display: flex;
+            gap: .75rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+            .empty-state .e-icon {
+                font-size: 2.5rem;
+                margin-bottom: .8rem;
+            }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .9rem 1.2rem;
+            border-top: 1px solid var(--border);
+            font-size: .85rem;
+            color: var(--muted);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+            <a href="../dashboard.html" class="brand">
+                <div class="brand-icon">🎓</div>
+                <div class="brand-name">Edu<span>Core</span></div>
+            </a>
+            <span class="panel-badge">Admin Panel</span>
+        </div>
+        <div class="topbar-right">
+            <button class="topbar-icon-btn">🔔</button>
+            <button class="topbar-icon-btn">⚙️</button>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Overview</div>
+                <a href="index.html" class="sidebar-link"><span class="icon">🏠</span> Dashboard</a>
+            </div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Academics</div>
+                <a href="class-section.html" class="sidebar-link active"><span class="icon">🏫</span> Class Section</a>
+                <a href="subject-section.html" class="sidebar-link"><span class="icon">📚</span> Subject Section</a>
+            </div>
+            <div class="sidebar-bottom">
+                <a href="../dashboard.html" class="sidebar-back">← Back to Home</a>
+            </div>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div class="page-heading">
+                <div class="breadcrumb"><a href="../dashboard.html">Home</a> / <a href="index.html">Admin</a> / <span>Class Section</span></div>
+                <h1>Class Section</h1>
+                <p>Manage all class sections in your school</p>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <span>🔍</span>
+                    <input type="text" placeholder="Search sections..." id="searchInput" oninput="filterTable()" />
+                </div>
+                <div style="display:flex;gap:.7rem;">
+                    <button class="btn btn-ghost">⬇ Export</button>
+                    <button class="btn btn-primary" onclick="openModal()">+ Add Class Section</button>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Class Name</th>
+                            <th>Section</th>
+                            <th>Grade</th>
+                            <th>Capacity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display:none">
+                    <div class="e-icon">🏫</div>
+                    <p>No class sections found. Add your first one!</p>
+                </div>
+                <div class="pagination">
+                    <span id="paginationInfo">Showing 0 results</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3 id="modalTitle">Add Class Section</h3>
+            <div class="form-field">
+                <label>Class Name</label>
+                <input type="text" id="className" placeholder="e.g. Grade 10" />
+            </div>
+            <div class="form-field">
+                <label>Section</label>
+                <input type="text" id="sectionName" placeholder="e.g. A, B, C" />
+            </div>
+            <div class="form-field">
+                <label>Grade</label>
+                <select id="grade">
+                    <option value="1">Grade 1</option>
+                    <option value="2">Grade 2</option>
+                    <option value="3">Grade 3</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10" selected>Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label>Capacity</label>
+                <input type="number" id="capacity" placeholder="e.g. 40" min="1" max="100" />
+            </div>
+            <div class="form-field">
+                <label>Status</label>
+                <select id="statusField">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSection()">Save Section</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-layout.js"></script>
+    <script>
+        let data = [
+            { id:1, className:'Grade 10', section:'A', grade:10, capacity:40, status:'Active' },
+            { id:2, className:'Grade 10', section:'B', grade:10, capacity:38, status:'Active' },
+            { id:3, className:'Grade 11', section:'A', grade:11, capacity:35, status:'Active' },
+            { id:4, className:'Grade 11', section:'B', grade:11, capacity:36, status:'Inactive' },
+            { id:5, className:'Grade 9',  section:'A', grade:9,  capacity:42, status:'Active' },
+        ];
+        let editingId = null;
+
+        function renderTable(rows) {
+            const tbody = document.getElementById('tableBody');
+            const empty = document.getElementById('emptyState');
+            document.getElementById('paginationInfo').textContent = `Showing ${rows.length} result${rows.length !== 1 ? 's' : ''}`;
+            if (!rows.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            tbody.innerHTML = rows.map((r, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${r.className}</td>
+                    <td>${r.section}</td>
+                    <td>Grade ${r.grade}</td>
+                    <td>${r.capacity}</td>
+                    <td><span class="badge ${r.status === 'Active' ? 'badge-green' : 'badge-amber'}">${r.status}</span></td>
+                    <td><div class="row-actions">
+                        <button class="action-icon edit" onclick="editRow(${r.id})">✏️</button>
+                        <button class="action-icon del"  onclick="deleteRow(${r.id})">🗑️</button>
+                    </div></td>
+                </tr>`).join('');
+        }
+
+        function filterTable() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            renderTable(data.filter(r => r.className.toLowerCase().includes(q) || r.section.toLowerCase().includes(q)));
+        }
+
+        function openModal(title = 'Add Class Section') {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('className').value = '';
+            document.getElementById('sectionName').value = '';
+            document.getElementById('grade').value = '10';
+            document.getElementById('capacity').value = '';
+            document.getElementById('statusField').value = 'Active';
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+        function saveSection() {
+            const className = document.getElementById('className').value.trim();
+            const section   = document.getElementById('sectionName').value.trim();
+            const grade     = parseInt(document.getElementById('grade').value);
+            const capacity  = parseInt(document.getElementById('capacity').value);
+            const status    = document.getElementById('statusField').value;
+            if (!className || !section || !capacity) { alert('Please fill all fields.'); return; }
+
+            if (editingId !== null) {
+                const idx = data.findIndex(x => x.id === editingId);
+                if (idx > -1) data[idx] = { id: editingId, className, section, grade, capacity, status };
+            } else {
+                data.push({ id: Date.now(), className, section, grade, capacity, status });
+            }
+            closeModal();
+            filterTable();
+        }
+
+        function editRow(id) {
+            const r = data.find(x => x.id === id);
+            if (!r) return;
+            editingId = r.id;
+            document.getElementById('modalTitle').textContent = 'Edit Class Section';
+            document.getElementById('className').value = r.className;
+            document.getElementById('sectionName').value = r.section;
+            document.getElementById('grade').value = r.grade;
+            document.getElementById('capacity').value = r.capacity;
+            document.getElementById('statusField').value = r.status;
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function deleteRow(id) {
+            if (!confirm('Delete this class section?')) return;
+            data = data.filter(x => x.id !== id);
+            filterTable();
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+        renderTable(data);
+    </script>
+</body>
+</html>
