@@ -309,6 +309,14 @@
                 transform: translateY(0);
             }
         }
+
+        a .panel-title{
+           display : none;
+        }
+
+        a:hover .panel-title {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -331,15 +339,15 @@
             <div class="row h-100">
                 <div class="col-md-1">
                     <div class="card mb-3 p-lg-3">
-                        <a href="Admin/index.html" class="d-flex align-items-center gap-5 text-decoration-none">
+                        <a href="Admin/index.html" class="d-flex align-items-center text-decoration-none flex-column">
                             <span class="panel-emoji">🛡️</span>
-                            <div class="panel-title ">Admin Section</div>
+                            <div class="panel-title fs-6">Admin Section</div>
                         </a>
                     </div>
                     <div class="card mb-3 p-lg-3">
-                        <a href="Administration/index.html" class="d-flex align-items-center gap-5 text-decoration-none">
+                        <a href="Administration/index.html" class="d-flex align-items-center  text-decoration-none flex-column">
                             <span class="panel-emoji">🏫</span>
-                            <div class="panel-title">Administration Section</div>
+                            <div class="panel-title fs-6">Administration Section</div>
                         </a>
                     </div>
                 </div>

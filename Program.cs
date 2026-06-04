@@ -14,9 +14,13 @@ builder.Services.AddControllersWithViews();
 
 // Mapping the services with the controller
 builder.Services.AddScoped<IAuthService, AuthServiceImpl>();
+
+builder.Services.AddScoped<IAdminSectionService, AdminSectionServiceImpl>();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddScoped<ILoggerFactory, LoggerFactory>();
+builder.Services.AddScoped<ILoggerFactory, LoggerFactory>();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 
