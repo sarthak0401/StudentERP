@@ -17,16 +17,39 @@ namespace Project_StudentERP.Controllers
             _logger = logger;
         }
 
-        [HttpGet("/login")]
+        [HttpPost("login")]
         public IActionResult UserLogin([FromBody] LoginRequestDTO dto)
         {
             try
             {
                 var response = _authService.UserLogin(dto);
+                if (response.Success)
+                {
+                    // Setting the cookie here, since the user credentials are validated
+                    Response.Cookies.Append(
+                        "accessToken",
+                        response.AccessToken,
+                        new CookieOptions
+                        {
+                            HttpOnly = true,
+                            Secure = true, 
+                            SameSite = SameSiteMode.Strict,
+                            Expires = DateTime.UtcNow.AddMinutes(15)
+                        }
+                    );
+
+
+                   return StatusCode(
+                       response.StatusCode,
+                       new { AccessToken = response.AccessToken, Success = response.Success, Message = response.Message }
+                   );
+                }
+
                 return StatusCode(
-                    response.StatusCode,
-                    new { Success = response.Success, Message = response.Message }
-                );
+                   response.StatusCode,
+                   new { Success = response.Success, Message = response.Message }
+               );
+
             }
             catch (Exception ex)
             {

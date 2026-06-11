@@ -1,18 +1,56 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Add Student</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'
+          rel='stylesheet'>
 
-<style>
-label {
-    min-width:180px;
-}
-</style>
+    <style>
+        label {
+            min-width: 180px;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            min-height: 100vh;
+            border-right: 1px solid #dee2e6;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-link {
+            color: #495057;
+            padding: 12px 20px;
+            margin: 4px 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+            .nav-link:hover {
+                background-color: #e9ecef;
+                color: #212529;
+                transform: translateX(5px);
+            }
+
+        .active-menu {
+            background-color: #0d6efd !important;
+            color: white !important;
+        }
+
+            .active-menu i {
+                color: white !important;
+            }
+    </style>
 </head>
 
 <body>
@@ -32,323 +70,360 @@ label {
 <div class="container-fluid">
     <div class="row">
 
-        <div class="col-md-3 col-lg-2 bg-light vh-100 border-end">
+        <!-- Sidebar -->
+        <div class="col-md-2 col-lg-2 sidebar p-0">
+            <ul class="nav flex-column mt-3">
 
-            <h4 class="mt-4 mb-4 text-center">
-                Administration
-            </h4>
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link ">
+                        <i class='bx bxs-dashboard me-2'></i>
+                        Dashboard
+                    </a>
+                </li>
 
-            <div class="list-group">
+                <li class="nav-item">
+                    <a href="AddStudent.html" class="nav-link active-menu">
+                        <i class='bx bxs-group me-2'></i>
+                        Add Student
+                    </a>
+                </li>
 
-                <a href="index.html"
-                   class="list-group-item list-group-item-action">
-                    Dashboard
-                </a>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class='bx bxs-school me-2'></i>
+                        Fee Receipt
+                    </a>
+                </li>
 
-                <a href="AddStudent.html"
-                   class="list-group-item list-group-item-action active">
-                    Add Student
-                </a>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class='bx bxs-book-open me-2'></i>
+                        Cancel Receipt
+                    </a>
+                </li>
 
-                <a href="StudentList.html"
-                   class="list-group-item list-group-item-action">
-                    Student List
-                </a>
-
-                <a href="FeeReceipts.html"
-                   class="list-group-item list-group-item-action">
-                    Fee Receipts
-                </a>
-
-                <a href="CancelReceipts.html"
-                   class="list-group-item list-group-item-action">
-                    Cancel Receipts
-                </a>
-
-            </div>
-
-            <div class="mt-4">
-                <a href="../dashboard.html"
-                   class="btn btn-outline-secondary w-100">
-                    Back to Dashboard
-                </a>
-            </div>
+            </ul>
 
         </div>
 
         <div class="col-md-9 col-lg-10 p-4">
-            <h2 class="mb-4">Add Student</h2>
+            <div class="d-flex justify-content-between">
+                <h2 class="mb-4">Add Student</h2>
+                <div class="d-flex justify-content-center align-items-center gap-2">
+                    <h5 class="m-0">Search Student</h5>
+                    <input id="searchStudent" type="text" placeholder="Enter name or mob of student" style="width : 300px; border-radius : 3px">
+                    <button class="btn btn-outline-dark">Search</button>
+                </div>
+            </div>
 
             <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="personal-info-tab"
-                                data-bs-toggle="tab" data-bs-target="#p-info-tab-pane"
-                                type="button" role="tab"
-                                aria-controls="p-info-tab-pane" aria-selected="true">
-                            Personal Information
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="parent-details-tab"
-                                data-bs-toggle="tab" data-bs-target="#parent-details-tab-pane"
-                                type="button" role="tab"
-                                aria-controls="parent-details-tab-pane" aria-selected="false">
-                            Parent Details
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="address-tab"
-                                data-bs-toggle="tab" data-bs-target="#address-tab-pane"
-                                type="button" role="tab"
-                                aria-controls="address-tab-pane" aria-selected="false">
-                            Address Details
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="acad-details-tab"
-                                data-bs-toggle="tab" data-bs-target="#acad-details-tab-pane"
-                                type="button" role="tab"
-                                aria-controls="acad-details-tab-pane" aria-selected="false">
-                            Academic Details
-                        </button>
-                    </li>
-                </ul>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="personal-info-tab"
+                            data-bs-toggle="tab" data-bs-target="#p-info-tab-pane"
+                            type="button" role="tab"
+                            aria-controls="p-info-tab-pane" aria-selected="true">
+                        Personal Information
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="parent-details-tab"
+                            data-bs-toggle="tab" data-bs-target="#parent-details-tab-pane"
+                            type="button" role="tab"
+                            aria-controls="parent-details-tab-pane" aria-selected="false">
+                        Parent Details
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="address-tab"
+                            data-bs-toggle="tab" data-bs-target="#address-tab-pane"
+                            type="button" role="tab"
+                            aria-controls="address-tab-pane" aria-selected="false">
+                        Address Details
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="acad-details-tab"
+                            data-bs-toggle="tab" data-bs-target="#acad-details-tab-pane"
+                            type="button" role="tab"
+                            aria-controls="acad-details-tab-pane" aria-selected="false">
+                        Academic Details
+                    </button>
+                </li>
+            </ul>
 
-                <div class="tab-content" id="myTabContent">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="p-info-tab-pane" role="tabpanel" aria-labelledby="personal-info-tab" tabindex="0">
+                    <div class="card p-4 m-3">
+                        <div class="row mb-3">
+                            <label for="sname" class="col-sm-2 col-form-label">Student Name</label>
 
-                    <!-- ── Tab 1 : Personal Information ── -->
-                    <div class="tab-pane fade show active" id="p-info-tab-pane"
-                         role="tabpanel" aria-labelledby="personal-info-tab" tabindex="0">
-                        <div class="card p-4 m-3">
-
-                            <div class="row mb-3">
-                                <label for="sname" class="col-sm-2 col-form-label">Student Name</label>
-                                <div class="col-sm-10">
-                                    <input id="sname" type="text" class="form-control" placeholder="Enter full name">
-                                </div>
+                            <div class="col-sm-10">
+                                <input id="sname" type="text" class="form-control">
                             </div>
-
-                            <div class="row mb-3">
-                                <label for="sdob" class="col-sm-2 col-form-label">Date of Birth</label>
-                                <div class="col-sm-10">
-                                    <input id="sdob" type="date" class="form-control" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label">Contact Number</label>
-                                <div class="col-sm-10">
-                                    <div id="contactContainer">
-                                        <div class="mb-2 contact-row d-flex gap-2">
-                                            <input type="text"
-                                                   class="form-control contact-number"
-                                                   placeholder="Enter Contact Number"
-                                                   maxlength="10">
-                                            <button type="button" class="btn btn-success" onclick="addContact()">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label">Gender</label>
-                                <div class="col-sm-10 d-flex align-items-center gap-3 pt-2">
-                                    <div>
-                                        <input id="sgender-m" type="radio" name="sgender" value="Male" />
-                                        <label for="sgender-m" style="width:auto">Male</label>
-                                    </div>
-                                    <div>
-                                        <input id="sgender-f" type="radio" name="sgender" value="Female" />
-                                        <label for="sgender-f" style="width:auto">Female</label>
-                                    </div>
-                                    <div>
-                                        <input id="sgender-o" type="radio" name="sgender" value="Other" />
-                                        <label for="sgender-o" style="width:auto">Other</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="sbloodGrp" class="col-sm-2 col-form-label">Blood Group</label>
-                                <div class="col-sm-10">
-                                    <input id="sbloodGrp" type="text" class="form-control" placeholder="e.g. A+" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="sPhotoUpload" class="col-sm-2 col-form-label">Upload Image</label>
-                                <div class="col-sm-10">
-                                    <input id="sPhotoUpload" type="file" accept="image/*"
-                                           class="form-control" onchange="previewImage(this)" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3 d-none" id="studentImagePreviewContainer">
-                                <label class="col-sm-2 col-form-label">Preview</label>
-                                <div class="col-sm-10">
-                                    <img id="studentImagePreview" src="" alt="Student Image"
-                                         class="img-thumbnail"
-                                         style="width:150px; height:150px; object-fit:cover;" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3 d-flex justify-content-end">
-                                <button class="custom-button" onclick="switchTab('parent-details-tab')">Next →</button>
-                            </div>
-
                         </div>
-                    </div>
 
-                    <!-- ── Tab 2 : Parent Details ── -->
-                    <div class="tab-pane fade" id="parent-details-tab-pane"
-                         role="tabpanel" aria-labelledby="parent-details-tab" tabindex="0">
-                        <div class="card p-4 m-3">
+                        <!--<div class="row mb-3">
+                <label for="sage" class="col-sm-2 col-form-label">Student Age </label>
+                <div class="col-sm-10">
+                    <input id="sage" type="number" class="form-control" />
+                </div>
+            </div>-->
 
-                            <div class="row mb-3">
-                                <label for="fname" class="col-sm-2 col-form-label">Father Name</label>
-                                <div class="col-sm-10">
-                                    <input id="fname" type="text" class="form-control" placeholder="Enter father's full name">
-                                </div>
+                        <div class="row mb-3">
+                            <label for="sdob" class="col-sm-2 col-form-label">Date of Birth</label>
+                            <div class="col-sm-10">
+                                <input id="sdob" type="date" class="form-control" />
                             </div>
-
-                            <div class="row mb-3">
-                                <label for="mname" class="col-sm-2 col-form-label">Mother Name</label>
-                                <div class="col-sm-10">
-                                    <input id="mname" type="text" class="form-control" placeholder="Enter mother's full name" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="gcontact1" class="col-sm-2 col-form-label">Contact Number</label>
-                                <div class="col-sm-10">
-                                    <input id="gcontact1" type="text" class="form-control"
-                                           placeholder="Enter 10 digit phone number" maxlength="10" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="gcontact2" class="col-sm-2 col-form-label">Alternate Contact</label>
-                                <div class="col-sm-10">
-                                    <input id="gcontact2" type="text" class="form-control"
-                                           placeholder="Enter 10 digit phone number" maxlength="10" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3 d-flex justify-content-between">
-                                <button class="custom-button" onclick="switchTab('personal-info-tab')">← Previous</button>
-                                <button class="custom-button" onclick="switchTab('address-tab')">Next →</button>
-                            </div>
-
                         </div>
-                    </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">Contact Number</label>
+                            <div class="col-sm-10">
+                                <div id="contactContainer">
 
-                    <!-- ── Tab 3 : Address Details ── -->
-                    <div class="tab-pane fade" id="address-tab-pane"
-                         role="tabpanel" aria-labelledby="address-tab" tabindex="0">
-                        <div class="card p-4 m-3">
+                                    <div class="mb-2 contact-row d-flex gap-2">
+                                        <input type="text"
+                                               class="form-control contact-number"
+                                               placeholder="Enter Contact Number"
+                                               maxlength="10">
 
-                            <div class="row mb-3">
-                                <label for="address" class="col-sm-2 col-form-label">Address</label>
-                                <div class="col-sm-10">
-                                    <input id="address" type="text" class="form-control" placeholder="Street / Locality">
+                                        <button type="button"
+                                                class="btn btn-success"
+                                                onclick="addContact()">
+                                            +
+                                        </button>
+                                    </div>
+
                                 </div>
-                            </div>
 
-                            <div class="row mb-3">
-                                <label for="city" class="col-sm-2 col-form-label">City</label>
-                                <div class="col-sm-10">
-                                    <input id="city" type="text" class="form-control" placeholder="City" />
-                                </div>
                             </div>
-
-                            <div class="row mb-3">
-                                <label for="state" class="col-sm-2 col-form-label">State</label>
-                                <div class="col-sm-10">
-                                    <input id="state" type="text" class="form-control" placeholder="State" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="pincode" class="col-sm-2 col-form-label">Pincode</label>
-                                <div class="col-sm-10">
-                                    <input id="pincode" type="number" class="form-control" placeholder="6-digit pincode" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3 d-flex justify-content-between">
-                                <button class="custom-button" onclick="switchTab('parent-details-tab')">← Previous</button>
-                                <button class="custom-button" onclick="switchTab('acad-details-tab')">Next →</button>
-                            </div>
-
                         </div>
-                    </div>
-
-                    <!-- ── Tab 4 : Academic Details ── -->
-                    <div class="tab-pane fade" id="acad-details-tab-pane"
-                         role="tabpanel" aria-labelledby="acad-details-tab" tabindex="0">
-                        <div class="card p-4 m-3">
-
-                            <div class="row mb-3 align-items-center">
-                                <div class="col-md-2">
-                                    <label for="10thPerctg" class="col-form-label">10th Percentage</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input id="10thPerctg" type="number" class="form-control" placeholder="e.g. 85.5">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="12thPerctg" class="col-form-label">12th Percentage</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input id="12thPerctg" type="number" class="form-control" placeholder="e.g. 78.0">
-                                </div>
+                        <div class="row mb-3">
+                            <label for="sgender" class="col-sm-2 col-form-label">Gender</label>
+                            <div class="col-sm-10">
+                                <input id="sgender-m" type="radio" name="sgender" value="Male" />
+                                <label for="sgender-m">Male</label>
+                                <input id="sgender-f" type="radio" name="sgender" value="Female" />
+                                <label for="sgender-f">Female</label>
+                                <input id="sgender-o" type="radio" name="sgender" value="Other" />
+                                <label for="sgender-o">Other</label>
                             </div>
-
-                            <div class="row mb-3">
-                                <label for="jeeRank" class="col-sm-2 col-form-label">JEE All India Rank</label>
-                                <div class="col-sm-10">
-                                    <input id="jeeRank" type="number" class="form-control" placeholder="Enter AIR" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="schoolName" class="col-sm-2 col-form-label">School / Junior College Name</label>
-                                <div class="col-sm-10">
-                                    <input id="schoolName" type="text" class="form-control" placeholder="Enter institution name" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="gapYrs" class="col-sm-2 col-form-label">Gap Years (if any)</label>
-                                <div class="col-sm-10">
-                                    <input id="gapYrs" type="number" class="form-control" min="0" placeholder="0" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="gapYrJustification" class="col-sm-2 col-form-label">Gap Year Justification</label>
-                                <div class="col-sm-10">
-                                    <input id="gapYrJustification" type="text" class="form-control"
-                                           placeholder="Required only if gap years > 0" />
-                                </div>
-                            </div>
-
-                            <div class="row mb-3 d-flex justify-content-between">
-                                <button class="custom-button" onclick="switchTab('address-tab')">← Previous</button>
-                                <button class="custom-button" onclick="SubmitStudentDetails()">
-                                    <i class="bi bi-check-circle me-1"></i>Submit
-                                </button>
-                            </div>
-
-                            <!-- Hidden fields -->
-                            <input type="hidden" id="HiddenStudentId" value="" />
-                            <input type="hidden" id="existingImage" />
-
                         </div>
+
+                        <div class="row mb-3">
+                            <label for="sbloodGrp" class="col-sm-2 col-form-label">Blood Group</label>
+                            <div class="col-sm-10">
+                                <input id="sbloodGrp" type="text" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="sPhotoUpload" class="col-sm-2 col-form-label">Upload Image</label>
+                            <div class="col-sm-10">
+                                <input id="sPhotoUpload" type="file" accept="image/*" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 d-none" id="studentImagePreviewContainer">
+                            <label class="col-sm-2 col-form-label">Current Image</label>
+
+                            <div class="col-sm-10">
+                                <img id="studentImagePreview"
+                                     src=""
+                                     alt="Student Image"
+                                     class="img-thumbnail"
+                                     style="width:150px; height:150px; object-fit:cover;" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 d-flex justify-content-end">
+                            <button class="custom-button" onclick="switchTab('parent-details-tab')">Next</button>
+                        </div>
+
                     </div>
 
                 </div>
+                <div class="tab-pane fade" id="parent-details-tab-pane" role="tabpanel" aria-labelledby="parent-details-tab" tabindex="0">
+
+                    <div class="card p-4 m-3">
+                        <div class="row mb-3">
+                            <label for="fname" class="col-sm-2 col-form-label">Father Name</label>
+
+                            <div class="col-sm-10">
+                                <input id="fname" type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="mname" class="col-sm-2 col-form-label">Mother Name </label>
+                            <div class="col-sm-10">
+                                <input id="mname" type="text" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="gcontact1" class="col-sm-2 col-form-label">Contact number</label>
+                            <div class="col-sm-10">
+                                <input id="gcontact1" type="text" class="form-control"
+                                       placeholder="Enter 10 digits phone number"
+                                       maxlength="10" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="gcontact2" class="col-sm-2 col-form-label">Alternate Contact number </label>
+                            <div class="col-sm-10">
+                                <input id="gcontact2" type="text" class="form-control"
+                                       placeholder="Enter 10 digits phone number"
+                                       maxlength="10" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 d-flex justify-content-between">
+                            <button type="button" class="custom-button" onclick="switchTab('personal-info-tab')">Previous</button>
+                            <button class="custom-button" onclick="switchTab('address-tab')">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="address-tab-pane" role="tabpanel" aria-labelledby="address-tab" tabindex="0">
+                    <div class="card p-4 m-3">
+                        <div class="row mb-3">
+                            <label for="address" class="col-sm-2 col-form-label">Address</label>
+
+                            <div class="col-sm-10">
+                                <input id="address" type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="city" class="col-sm-2 col-form-label">City</label>
+                            <div class="col-sm-10">
+                                <input id="city" type="text" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="state" class="col-sm-2 col-form-label">State</label>
+                            <div class="col-sm-10">
+                                <input id="state" type="text" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="pincode" class="col-sm-2 col-form-label">Pincode</label>
+                            <div class="col-sm-10">
+                                <input id="pincode" type="number" class="form-control" />
+                            </div>
+                        </div>
+
+
+                        <div class="row mb-3 d-flex justify-content-between">
+                            <button class="custom-button" onclick="switchTab('parent-details-tab')">Previous</button>
+                            <button class="custom-button" onclick="switchTab('acad-details-tab')">Next</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="acad-details-tab-pane" role="tabpanel" aria-labelledby="acad-details-tab" tabindex="0">
+                    <div class="card p-4 m-3">
+                        <div class="row mb-3 align-items-center">
+
+                            <!-- 10th Percentage -->
+
+                            <div class="col-md-2">
+
+                                <label for="10thPerctg"
+                                       class="col-form-label">
+
+                                    10th Percentage
+
+                                </label>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <input id="10thPerctg"
+                                       type="number"
+                                       class="form-control">
+
+                            </div>
+
+                            <!-- 12th Percentage -->
+
+                            <div class="col-md-2">
+
+                                <label for="12thPerctg"
+                                       class="col-form-label">
+
+                                    12th Percentage
+
+                                </label>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <input id="12thPerctg"
+                                       type="number"
+                                       class="form-control">
+
+                            </div>
+
+                        </div>
+                        <!--<div class="row mb-3">
+                <label for="12thPerctg" class="col-sm-2 col-form-label">12th Percentage</label>
+
+                <div class="col-sm-10">
+                    <input id="12thPerctg" type="number" class="form-control">
+                </div>
+            </div>-->
+
+                        <div class="row mb-3">
+                            <label for="jeeRank" class="col-sm-2 col-form-label">JEE All India Rank</label>
+                            <div class="col-sm-10">
+                                <input id="jeeRank" type="number" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="schoolName" class="col-sm-2 col-form-label">School / Junior College Name</label>
+                            <div class="col-sm-10">
+                                <input id="schoolName" type="text" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="gapYrs" class="col-sm-2 col-form-label">Gap years in Eductation (if any)</label>
+                            <div class="col-sm-10">
+                                <input id="gapYrs" type="number" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="gapYrJustification" class="col-sm-2 col-form-label">Justification for Gap years (if gap in education exists)</label>
+                            <div class="col-sm-10">
+                                <input id="gapYrJustification" type="text" class="form-control" />
+                            </div>
+                        </div>
+
+
+
+                        <div class="row mb-3 d-flex justify-content-between">
+                            <button class="custom-button" onclick="switchTab('address-tab')">Previous</button>
+                            <button class="custom-button" onclick="SubmitStudentDetails()">Submit</button>
+                        </div>
+
+                        <input type="hidden" id="HiddenStudentId" value="" />
+                        <input type="hidden" id="existingImage" />
+                    </div>
+
+
+                </div>
+
             </div>
         </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
