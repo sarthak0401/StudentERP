@@ -116,7 +116,7 @@ async function SubmitStudentDetails() {
 
 
         try {
-            const response = await authFetch("https://localhost:7290/api/teacher/addStudent", {
+            const response = await fetch("https://localhost:7098/api/adm/addStudent", {
                 method: "POST",
                 body: formData,
             });
@@ -206,11 +206,8 @@ async function showSection(id) {
 
 async function handleEdit(id) {
     try {
-        const response = await fetch(`https://localhost:7290/api/teacher/student/${id}`);
+        const response = await fetch(`https://localhost:7098/api/adm/student/${id}`);
         const student = await response.json();
-
-        showSection("add-student-section");
-
 
         document.getElementById("HiddenStudentId").value = student.sId;
         document.getElementById("existingImage").value =
@@ -232,7 +229,7 @@ async function handleEdit(id) {
         document.getElementById("sbloodGrp").value = student.sBloodGrp;
         if (student.sImg) {
             let imgPrev = document.getElementById("studentImagePreview");
-            imgPrev.src = `https://localhost:7290/studentImages/${student.sImg}`;
+            imgPrev.src = `https://localhost:7098/studentImages/${student.sImg}`;
 
             document.getElementById("studentImagePreviewContainer").classList.remove("d-none");
         }
@@ -270,7 +267,7 @@ async function loadStudents() {
         tbody.innerHTML = "";
 
 
-        const response = await fetch("https://localhost:7290/api/teacher/students");
+        const response = await fetch("https://localhost:7290/api/adm/students");
         const students = await response.json();
 
         const tableBody = document.getElementById("student-table-body");
@@ -841,9 +838,9 @@ async function classDropdown() {
 }
 
 
-async function searchStudentToEnroll() {
+async function searchStudentToE() {
     var tableBody = document.getElementById("modal-student-list-table");
-    var searchStudentName = document.getElementById("StudName_EnrollClass").value;
+    var searchStudentName = document.getElementById("searchStudent").value;
     tableBody.innerHTML = "";
 
     try {
@@ -853,7 +850,7 @@ async function searchStudentToEnroll() {
             "SearchText": searchStudentName
         };
 
-        const response = await fetch("https://localhost:7290/api/teacher/student/search", {
+        const response = await fetch("https://localhost:7098/api/adm/student/search", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -867,16 +864,18 @@ async function searchStudentToEnroll() {
         console.log(students);
         students.forEach(student => {
             tableBody.innerHTML += `
-            <tr onClick="EnrollStudentSetStudent('${student.sName}', ${student.sId})" data-bs-dismiss="modal">
+            <tr onClick="handleEdit(${student.sId})" data-bs-dismiss="modal">
                 <td> ${index++}</td>       
-                <td> ${student.sName}</td>       
-                <td style="width: 150px;"> ${student.sContact}</td>             
+                <td> ${student.sName}</td>         
             </tr>`;
         });
+        
     }
     catch (err) {
         console.log(err);
     }
+
+    document.getElementById("searchStudent").value = "";
 }
 
 

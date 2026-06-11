@@ -1,9 +1,9 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Project_StudentERP.Interfaces;
 using Project_StudentERP.Services;
 using Serilog;
-using System.Text;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -22,32 +22,36 @@ builder.Services.AddScoped<IAdminSectionService, AdminSectionServiceImpl>();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ILoggerFactory, LoggerFactory>();
+builder.Services.AddScoped<IAdministrationService, AdministrationServiceImpl>();
 
 // Adding jwt authentication here, this is the middleware, like it will intercept the request and check for the token in the cookie and validate it, if valid then it will allow the request to proceed, otherwise it will return 401 unauthorized
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder
+    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidateAudience = true,
-        ValidateIssuer = true,
-        ValidateIssuerSigningKey = true,
-        ValidateLifetime = true,
-
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-    };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            context.Token = context.Request.Cookies["accessToken"];
-            return Task.CompletedTask;
-        },
-    };
-});
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+            ),
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["accessToken"];
+                return Task.CompletedTask;
+            },
+        };
+    });
 
 builder.Host.UseSerilog();
-
 
 var app = builder.Build();
 
