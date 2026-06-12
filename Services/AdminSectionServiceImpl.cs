@@ -1,6 +1,4 @@
 ﻿using System.Data;
-using System.Net.NetworkInformation;
-using System.Xml.Linq;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Project_StudentERP.DTOs;
@@ -70,6 +68,52 @@ namespace Project_StudentERP.Services
                     Status = 500,
                     Message = "Internal server error",
                     Success = false,
+                };
+            }
+        }
+
+        public AddFeeTypeResponseDTO AddFeeType(AddFeeTypeRequestDTO dto)
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                int res = conn.Execute(
+                    "sp_addOrEditFeeType",
+                    new
+                    {
+                        @Id = dto.FeeTypeId == null ? null : dto.FeeTypeId,
+                        @Name = dto.FeeTypeName,
+                    },
+                    commandType: CommandType.StoredProcedure
+                );
+
+                if (res > 0)
+                {
+                    return new AddFeeTypeResponseDTO
+                    {
+                        Status = 200,
+                        Success = true,
+                        Message = "Operation Successfull!",
+                    };
+                }
+                return new AddFeeTypeResponseDTO
+                {
+                    Status = 400,
+                    Success = false,
+                    Message = "Operation Unsuccessfull!",
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new AddFeeTypeResponseDTO
+                {
+                    Status = 500,
+                    Success = false,
+                    Message = "Internal Server Error",
                 };
             }
         }
@@ -191,6 +235,47 @@ namespace Project_StudentERP.Services
             }
         }
 
+        public async Task<DeleteFeeTypeResponseDTO> DeleteFeeType(int id)
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                int rowAffected = await conn.ExecuteAsync(
+                    "delete from FeeType where FeeTypeId = @Id",
+                    new { Id = id }
+                );
+
+                if (rowAffected > 0)
+                {
+                    return new DeleteFeeTypeResponseDTO
+                    {
+                        Status = 200,
+                        Message = "Deletion successfull",
+                        Success = true,
+                    };
+                }
+                return new DeleteFeeTypeResponseDTO
+                {
+                    Status = 400,
+                    Message = "Bad request!",
+                    Success = false,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new DeleteFeeTypeResponseDTO
+                {
+                    Status = 500,
+                    Message = "Internal Server Error",
+                    Success = false,
+                };
+            }
+        }
+
         public List<ClassModel> GetAllClasses()
         {
             try
@@ -208,6 +293,25 @@ namespace Project_StudentERP.Services
             {
                 _logger.LogError(ex, ex.Message);
                 return new List<ClassModel>();
+            }
+        }
+
+        public List<FeeType> GetAllFeeTypes()
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                var res = conn.Query<FeeType>("select * from FeeType").ToList();
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new List<FeeType>();
             }
         }
 

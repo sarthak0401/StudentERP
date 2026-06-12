@@ -1,0 +1,39 @@
+﻿label {
+    min-width: 180px;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+/* Sidebar */
+.sidebar {
+    background: white;
+    min-height: 100vh;
+    border-right: 1px solid #dee2e6;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+}
+
+.nav-link {
+    color: #495057;
+    padding: 12px 20px;
+    margin: 4px 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    background-color: #e9ecef;
+    color: #212529;
+    transform: translateX(5px);
+}
+
+.active-menu {
+    background-color: #0d6efd !important;
+    color: white !important;
+}
+
+.active-menu i {
+    color: white !important;
+}

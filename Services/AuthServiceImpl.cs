@@ -1,12 +1,12 @@
-﻿using Dapper;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography.Xml;
+using System.Text;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using Project_StudentERP.DTOs;
 using Project_StudentERP.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography.Xml;
-using System.Text;
 
 namespace Project_StudentERP.Services
 {
@@ -23,21 +23,21 @@ namespace Project_StudentERP.Services
 
         public string GenerateJwtToken(string userId, string userRole)
         {
-           var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, userId),
-                new Claim(ClaimTypes.Role, userRole)
+                new Claim(ClaimTypes.Role, userRole),
             };
 
             var token = new JwtSecurityToken(
-                    claims: claims,
-                    signingCredentials: creds,
-                    expires: DateTime.Now.AddMinutes(15)
-                );
+                claims: claims,
+                signingCredentials: creds,
+                expires: DateTime.Now.AddMinutes(15)
+            );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
@@ -58,13 +58,16 @@ namespace Project_StudentERP.Services
                 Console.WriteLine(resp.PKID);
                 Console.WriteLine(resp.ROLE);
 
-                if (resp!=null)
+                if (resp != null)
                 {
                     return new LoginResponseDTO
                     {
                         StatusCode = 200,
                         Success = true,
-                        AccessToken = GenerateJwtToken(Convert.ToString(resp.PKID), Convert.ToString(resp.ROLE)),
+                        AccessToken = GenerateJwtToken(
+                            Convert.ToString(resp.PKID),
+                            Convert.ToString(resp.ROLE)
+                        ),
                         Message = "User Logged in successfully",
                     };
                 }

@@ -6,8 +6,9 @@ namespace Project_StudentERP.Interfaces
     public interface IAdministrationService
     {
         Task AddStudent(StudentDTO dto, string filename, int tId);
+        List<string> getAllContacts(int id);
         List<Student> GetAllStudents();
         Student GetStudentById(int id);
-        List<Student> GetStudentsOnSearch(StudentSearchDTO studentSearchDTO);
+        List<SearchStudentResponseDTO> GetStudentsOnSearch(StudentSearchDTO studentSearchDTO);
     }
 }

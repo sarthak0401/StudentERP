@@ -73,6 +73,8 @@ async function SubmitStudentDetails() {
             }
         });
 
+        console.log("Contacts of the student:", contacts);
+
         formData.append("SAge", sAge);
         formData.append("SDOB", sDOB);
         // formData.append("SContact", sContact);
@@ -207,7 +209,12 @@ async function showSection(id) {
 async function handleEdit(id) {
     try {
         const response = await fetch(`https://localhost:7098/api/adm/student/${id}`);
+
+        const resp_contacts = await fetch(`https://localhost:7098/api/adm/student/contacts/${id}`)
+
         const student = await response.json();
+        const student_contacts = await resp_contacts.json();
+        console.log(student_contacts);
 
         document.getElementById("HiddenStudentId").value = student.sId;
         document.getElementById("existingImage").value =
@@ -217,7 +224,36 @@ async function handleEdit(id) {
         // document.getElementById("sage").value = "";
         document.getElementById("sdob").value =
             student.sdob.split("T")[0];
-        // document.getElementById("scontact").value = student.sContact;
+
+        document.querySelector(".contact-number").value = student_contacts.contacts[0];
+
+        var idx = 1;
+        student_contacts.contacts.forEach(contact => {
+            if (idx!=1){
+                const container = document.getElementById("contactContainer");
+
+                const row = document.createElement("div");
+
+                row.className = "mb-2 contact-row d-flex gap-2";
+
+                row.innerHTML = `
+                <input type="text"
+                       class="form-control contact-number"
+                       placeholder="Enter Contact Number"
+                       maxlength="10" value="${contact}">
+
+                <button type="button"
+                        class="btn btn-danger"
+                        onclick="removeContact(this)">
+                    -
+                </button>
+            `;
+
+                container.appendChild(row);
+            }
+            idx++;
+        });
+
         let gender =
             document.querySelector(
                 `input[name="sgender"][value="${student.sGender}"]`
@@ -860,6 +896,7 @@ async function searchStudentToE() {
 
         const students = await response.json();
 
+        
         let index = 1;
         console.log(students);
         students.forEach(student => {
@@ -867,6 +904,8 @@ async function searchStudentToE() {
             <tr onClick="handleEdit(${student.sId})" data-bs-dismiss="modal">
                 <td> ${index++}</td>       
                 <td> ${student.sName}</td>         
+                <td> ${student.studentContact}</td>         
+                <td> ${student.sdob.split(" ")[0]}</td>         
             </tr>`;
         });
         

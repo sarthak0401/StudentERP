@@ -30,8 +30,15 @@ namespace Project_StudentERP.Services
                     _configuration.GetConnectionString("DefaultConnection")
                 );
 
+                _logger.LogInformation("Student Id: {Id}", dto.SId);
+
                 var dt = new DataTable();
                 dt.Columns.Add("ContactNo");
+                foreach (var contact in dto.ContactNos)
+                {
+                    _logger.LogInformation("Contact: {Contact}", contact.ContactNo);
+                }
+
                 foreach (var item in dto.ContactNos)
                 {
                     dt.Rows.Add(item.ContactNo);
@@ -83,6 +90,29 @@ namespace Project_StudentERP.Services
             }
         }
 
+        public List<string> getAllContacts(int id)
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                var contacts = conn.Query<string>(
+                        "select ContactNo from StudentContact where StudentId = @id",
+                        new { id = id }
+                    )
+                    .ToList();
+
+                return contacts;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new();
+            }
+        }
+
         public List<Student>? GetAllStudents()
         {
             try
@@ -121,7 +151,7 @@ namespace Project_StudentERP.Services
             }
         }
 
-        public List<Student> GetStudentsOnSearch(StudentSearchDTO studentSearchDTO)
+        public List<SearchStudentResponseDTO> GetStudentsOnSearch(StudentSearchDTO studentSearchDTO)
         {
             try
             {
@@ -129,14 +159,9 @@ namespace Project_StudentERP.Services
                     _configuration.GetConnectionString("DefaultConnection")
                 );
 
-                var param = new
-                {
-                    FDate = studentSearchDTO.FDate,
-                    EDate = studentSearchDTO.EDate,
-                    SearchText = studentSearchDTO.SearchText,
-                };
+                var param = new { SearchText = studentSearchDTO.SearchText };
 
-                var students = conn.Query<Student>(
+                var students = conn.Query<SearchStudentResponseDTO>(
                         "sp_searchStudent",
                         param,
                         commandType: CommandType.StoredProcedure

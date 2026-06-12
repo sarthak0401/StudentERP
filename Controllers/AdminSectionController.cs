@@ -136,5 +136,90 @@ namespace Project_StudentERP.Controllers
 
             return Ok(res);
         }
+
+        [HttpPost("add/feeType")]
+        public IActionResult AddFeeType([FromBody] AddFeeTypeRequestDTO dto)
+        {
+            try
+            {
+                var res = _adminSectionService.AddFeeType(dto);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        message = "Internal Server Error",
+                        success = false,
+                        status = 500,
+                    }
+                );
+            }
+        }
+
+        [HttpGet("get/feeType")]
+        public IActionResult GetAllFeeTypes()
+        {
+            try
+            {
+                var res = _adminSectionService.GetAllFeeTypes();
+                return StatusCode(
+                    200,
+                    new
+                    {
+                        success = true,
+                        status = 200,
+                        FeeTypes = res,
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        message = "Internal Server Error",
+                        success = false,
+                        status = 500,
+                    }
+                );
+            }
+        }
+
+        [HttpDelete("del/feeType/{id}")]
+        public async Task<IActionResult> DeleteFeeType(int id)
+        {
+            try
+            {
+                var res = await _adminSectionService.DeleteFeeType(id);
+                return StatusCode(
+                    res.Status,
+                    new
+                    {
+                        success = res.Success,
+                        status = res.Status,
+                        Message = res.Message,
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        status = 500,
+                        success = false,
+                        message = "Internal Server Error",
+                    }
+                );
+            }
+        }
     }
 }

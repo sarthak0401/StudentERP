@@ -1,25 +1,27 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-
+    <meta charset="utf-8" />
+    <title></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'
           rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" integrity="sha512-O03ntXoVqaGUTAeAmvQ2YSzkCvclZEcPQu1eqloPaHfJ5RuNGiS4l+3duaidD801P50J28EHyonCV06CUlTSag==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="stylesheet" href="common-sidebar.css"/>
+    <link rel="stylesheet" href="common-sidebar.css" />
+    <style>
+        .ftheading {
+            padding: 10px;
+            box-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+            border-radius: 5px;
+        }
+    </style>
 </head>
-
 <body>
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-light bg-light border-bottom">
+    <nav class="navbar navbar-light border-bottom">
         <div class="container-fluid">
-
             <a href="../dashboard.html"
                class="navbar-brand fw-bold d-flex align-items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -28,23 +30,21 @@
                     <path d="m21.45 8.61-9-4.5a1 1 0 0 0-.89 0l-6 3-3 1.5-1 .5a1 1 0 0 0-.55.89v6h2v-5.38l2 1v3.83c0 2.06 3.12 4.56 7 4.56s7-2.49 7-4.56v-3.83l2.45-1.22c.34-.17.55-.52.55-.89s-.21-.72-.55-.89Zm-15 .29L12 6.12l6.76 3.38L12 12.88 5.24 9.5l1.21-.61ZM17 15.45c0 .76-2.11 2.56-5 2.56s-5-1.79-5-2.56v-2.83l4.55 2.28c.14.07.29.11.45.11s.31-.04.45-.11L17 12.62z"></path>
                 </svg> Student ERP
             </a>
-
             <span>
                 Welcome, <strong>Admin</strong>
             </span>
-
         </div>
     </nav>
 
+
     <div class="container-fluid">
         <div class="row">
-
             <!-- Sidebar -->
             <div class="col-md-2 col-lg-2 sidebar p-0">
                 <ul class="nav flex-column mt-3">
 
                     <li class="nav-item">
-                        <a href="index.html" class="nav-link active-menu ">
+                        <a href="index.html" class="nav-link">
                             <i class='bx bxs-dashboard me-2'></i>
                             Dashboard
                         </a>
@@ -68,112 +68,77 @@
                         <a href="#feeMenu" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="false">
                             <i class='bx bx-wallet me-2'></i>Fee Management
                         </a>
-                        <div class="collapse" id="feeMenu">
+                        <div id="feeMenu">
                             <ul class="nav flex-column ms-5">
                                 <li class="nav-item">
-                                    <a href="fee-section-FeeTypes.html" class="nav-link">
-                                        <i class='bx bx-purchase-tag'></i>  
+                                    <a href="fee-section-FeeTypes.html" class="nav-link active-menu">
+                                        <i class='bx bx-purchase-tag'></i>
                                         Fee Types
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="fee-section-ClassFeeMap.html" class="nav-link">
-                                        <i class='bx bx-link-alt'></i>  
+                                        <i class='bx bx-link-alt'></i>
                                         Class Fee Mapping
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="fee-section-FeeStructure.html" class="nav-link">
-                                        <i class='bx bx-spreadsheet'></i>  
+                                        <i class='bx bx-spreadsheet'></i>
                                         Fee Structure
                                     </a>
                                 </li>
                             </ul>
                         </div>
                     </li>
-
-
-
                 </ul>
 
             </div>
 
-            <!-- Main Content -->
+            <!--Main content-->
             <div class="col-md-9 col-lg-10 p-4">
-
-                <h2 class="mb-4">
-                    Admin Dashboard
-                </h2>
-
-                <!-- Statistics -->
-                <div class="row g-3 mb-4">
-
-                    <div class="col-md-3">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h3>24</h3>
-                                <p class="mb-0">Class Sections</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h3>68</h3>
-                                <p class="mb-0">Subjects</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h3>142</h3>
-                                <p class="mb-0">Teachers</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h3>1840</h3>
-                                <p class="mb-0">Students</p>
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-2">
+                        Fee Types Section
+                    </h2>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="card">
+                <div class="row">
+                    <div class="col-md-5 mt-lg-5">
+                        <div class="card p-3">
+                            <h5 class="text-center mb-4 p-2" style=" box-shadow: 2px 2px 5px rgba(0,0,0,0.5); border-radius:5px">Add New Fee Type</h5>
+                            <div class="d-flex gap-3">
+                                <label for="feeTypeName" class="mb-1">Enter the Fee Type Name: </label>
+                                <input type="text" id="feeTypeName" placeholder="Eg. Tuition Fee" style="border-radius:5px; height: 30px; padding-left : 10px; width : 100%" />
+                            </div>
+                            <button class="btn btn-primary mt-3 w-50 m-auto btn-sm"
+                                    onclick="AddFeeType()">
+                                Add
+                            </button>
 
-                    <div class="card-header">
-                        Quick Actions
+                            <input type="hidden" id="hiddenField"/>
+
+                        </div>
                     </div>
-
-                    <div class="card-body">
-
-                        <a href="class-section.html"
-                           class="btn btn-primary me-2">
-                            Manage Classes
-                        </a>
-
-                        <a href="subject-section.html"
-                           class="btn btn-success">
-                            Manage Subjects
-                        </a>
-
+                    <div class="col-md-7 text-center mt-lg-5">
+                        <h1 class="ftheading">Available Fee Types</h1>
+                        <table class="table table-hover table-bordered text-center">
+                            <tr>
+                                <th>Sr.No</th>
+                                <th>Fee Type</th>
+                                <th>Actions</th>
+                            </tr>
+                            <tbody id="feeTypeTableBody"></tbody>
+                        </table>
                     </div>
-
                 </div>
-
             </div>
 
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="Js/fee-section.js"></script>
 </body>
 </html>

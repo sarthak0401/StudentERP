@@ -28,12 +28,6 @@ namespace Project_StudentERP.Controllers
         {
             try
             {
-                // debugging the list of contacts
-                foreach (var x in dto.ContactNos)
-                {
-                    Console.WriteLine(x.ContactNo);
-                }
-
                 var filename = dto.ExistingImage;
                 if (dto.SImg != null)
                 {
@@ -112,6 +106,13 @@ namespace Project_StudentERP.Controllers
                 _logger.LogError(ex, ex.Message);
                 return StatusCode(500, new { success = false, message = "Internal server error" });
             }
+        }
+
+        [HttpGet("student/contacts/{id}")]
+        public IActionResult GetAllContactsOfStudent(int id)
+        {
+            var contacts = _administrationService.getAllContacts(id);
+            return StatusCode(200, new { Success = true, Contacts = contacts });
         }
     }
 }

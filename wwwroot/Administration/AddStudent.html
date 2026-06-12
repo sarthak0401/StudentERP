@@ -135,6 +135,21 @@
         .delete-btn:hover {
             background: #bb2d3b;
         }
+
+        .modal-backdrop.show {
+            opacity: 0.9 !important;
+        }
+
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        #searchStudentDiv{
+            box-shadow : 0 0 10px rgba(0,0,0,0.7);
+            border-radius : 5px;
+            padding : 20px;
+        }
     </style>
 </head>
 
@@ -176,14 +191,14 @@
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class='bx bxs-school me-2'></i>
-                        Fee Receipt
+                        Admission  
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class='bx bxs-book-open me-2'></i>
-                        Cancel Receipt
+                        Fee
                     </a>
                 </li>
 
@@ -194,8 +209,9 @@
         <div class="col-md-9 col-lg-10 p-4">
             <div class="d-flex justify-content-between">
                 <h2 class="mb-4">Add Student</h2>
-                <div class="d-flex justify-content-center align-items-center gap-2">
-                    <h5 class="m-0">Search Student</h5>
+
+                <div class="d-flex justify-content-center align-items-center gap-2" id="searchStudentDiv">
+                    <h6 class="m-0">Search Student</h6>
                     <input id="searchStudent" type="text" placeholder="Enter name or mob of student" style="width : 300px; border-radius : 3px">
                     <button class="btn btn-primary"
                             onclick="searchStudentToE()" data-bs-toggle="modal"
@@ -209,19 +225,20 @@
 
             <!-- Modal -->
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="staticBackdropLabel">Matching Students</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <table>
+                            <table class="table table-hover table-bordered w-100">
                                 <thead>
                                     <tr>
                                         <td>Sr.No</td>
                                         <td>Student Name</td>
-                                        <!--<td>Student Contact</td>-->
+                                        <td>Student Contact</td>
+                                        <td>Student DOB</td>
                                     </tr>
                                 </thead>
 
