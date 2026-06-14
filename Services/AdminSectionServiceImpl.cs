@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Xml;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Project_StudentERP.DTOs;
@@ -31,13 +32,13 @@ namespace Project_StudentERP.Services
 
                 var param = new
                 {
-                    cname = dto.ClassN,
+                    standardId = dto.StandardId,
                     section = dto.Section,
                     capacity = dto.Capacity,
                     status = dto.Status,
                 };
                 int rowAffected = conn.Execute(
-                    "insert into Classes(CNAME,SECTION,CAPACITY,STATUS) values(@cname, @section, @capacity, @status)",
+                    "insert into Classes(SECTION,CAPACITY,STATUS, StandardId) values(@section, @capacity, @status, @standardId)",
                     param
                 );
 
@@ -68,6 +69,77 @@ namespace Project_StudentERP.Services
                     Status = 500,
                     Message = "Internal server error",
                     Success = false,
+                };
+            }
+        }
+
+        public async Task<AddFeeStructureAmountResponseDTO> AddFeeStructure(
+            AddFeeStructureAmountRequestDTO dto
+        )
+        {
+            if (dto.FeeStructures == null || !dto.FeeStructures.Any())
+            {
+                return new AddFeeStructureAmountResponseDTO
+                {
+                    Success = false,
+                    Status = 400,
+                    Message = "No fee structures provided",
+                };
+            }
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("StandardFeeMapId", typeof(int));
+            dt.Columns.Add("Amount", typeof(decimal));
+
+            foreach (var x in dto.FeeStructures)
+            {
+                dt.Rows.Add(x.StandardFeeMapId, x.Amount);
+            }
+
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+                await conn.OpenAsync();
+
+                using SqlTransaction transaction = conn.BeginTransaction();
+                try
+                {
+                    var param = new DynamicParameters();
+                    param.Add("@FeeStructures", dt.AsTableValuedParameter("FeeStructureType"));
+
+                    await conn.ExecuteAsync(
+                        "sp_SaveFeeStructure",
+                        param,
+                        transaction,
+                        commandType: CommandType.StoredProcedure
+                    );
+
+                    await transaction.CommitAsync();
+
+                    return new AddFeeStructureAmountResponseDTO
+                    {
+                        Success = true,
+                        Status = 200,
+                        Message = "Fee structure added successfully",
+                    };
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                return new AddFeeStructureAmountResponseDTO
+                {
+                    Success = false,
+                    Status = 500,
+                    Message = "Internal server error",
                 };
             }
         }
@@ -114,6 +186,64 @@ namespace Project_StudentERP.Services
                     Status = 500,
                     Success = false,
                     Message = "Internal Server Error",
+                };
+            }
+        }
+
+        public AddStdFeeTypeMappingResponseDTO AddStdFeeMapping(AddStdFeeTypeMappingRequestDTO dto)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("FeeTypeId", typeof(int));
+
+            foreach (var x in dto.FeeTypes)
+            {
+                Console.WriteLine(x);
+                dt.Rows.Add(x);
+            }
+
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                var param = new DynamicParameters();
+                param.Add("@StdId", dto.StdId);
+                param.Add("@FeeTypes", dt.AsTableValuedParameter("StdFeeTypes"));
+
+                int rowsAffected = conn.Execute(
+                    "sp_addStdFeeTypes",
+                    param,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                if (rowsAffected > 0)
+                {
+                    return new AddStdFeeTypeMappingResponseDTO
+                    {
+                        Status = 200,
+                        Success = true,
+                        Message = "Mapping done successfully",
+                    };
+                }
+                else
+                {
+                    return new AddStdFeeTypeMappingResponseDTO
+                    {
+                        Status = 400,
+                        Success = false,
+                        Message = "Mapping failed!",
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new AddStdFeeTypeMappingResponseDTO
+                {
+                    Status = 500,
+                    Message = "Internal Server error",
+                    Success = false,
                 };
             }
         }
@@ -284,7 +414,10 @@ namespace Project_StudentERP.Services
                     _configuration.GetConnectionString("DefaultConnection")
                 );
 
-                List<ClassModel> allClasses = conn.Query<ClassModel>("select * from Classes")
+                List<ClassModel> allClasses = conn.Query<ClassModel>(
+                        "sp_getAllClasses",
+                        commandType: CommandType.StoredProcedure
+                    )
                     .ToList();
 
                 return allClasses;
@@ -312,6 +445,52 @@ namespace Project_StudentERP.Services
             {
                 _logger.LogError(ex, ex.Message);
                 return new List<FeeType>();
+            }
+        }
+
+        public List<FeeTypeForParticularStd> GetAllFeeTypesForParticularStdId(int id)
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                var res = conn.Query<FeeTypeForParticularStd>(
+                        "sp_getFeeTypesForParticularStd",
+                        new { StdId = id },
+                        commandType: CommandType.StoredProcedure
+                    )
+                    .ToList();
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new List<FeeTypeForParticularStd>();
+            }
+        }
+
+        public List<StandardResponseDTO> GetAllStandards()
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                var res = conn.Query<StandardResponseDTO>(
+                        "select * from Standards order by StandardId"
+                    )
+                    .ToList();
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new List<StandardResponseDTO>();
             }
         }
 

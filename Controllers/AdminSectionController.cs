@@ -1,4 +1,5 @@
-﻿using System.Transactions;
+﻿using System.Data;
+using System.Transactions;
 using Microsoft.AspNetCore.Mvc;
 using Project_StudentERP.DTOs;
 using Project_StudentERP.Interfaces;
@@ -217,6 +218,99 @@ namespace Project_StudentERP.Controllers
                         status = 500,
                         success = false,
                         message = "Internal Server Error",
+                    }
+                );
+            }
+        }
+
+        [HttpGet("get/standards")]
+        public IActionResult GetAllStandards()
+        {
+            var res = _adminSectionService.GetAllStandards();
+            return StatusCode(
+                200,
+                new
+                {
+                    Status = 200,
+                    Success = true,
+                    Standards = res,
+                }
+            );
+        }
+
+        [HttpPost("add/stdFeeMap")]
+        public IActionResult AddStdFeeMapping([FromBody] AddStdFeeTypeMappingRequestDTO dto)
+        {
+            try
+            {
+                var res = _adminSectionService.AddStdFeeMapping(dto);
+                return StatusCode(res.Status, res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Success = false,
+                        Status = 500,
+                        Message = "Internal server error",
+                    }
+                );
+            }
+        }
+
+        [HttpGet("get/feeTypes/StdId/{id}")]
+        public IActionResult GetAllFeeTypesForParticularStdId(int id)
+        {
+            try
+            {
+                var res = _adminSectionService.GetAllFeeTypesForParticularStdId(id);
+                return Ok(
+                    new
+                    {
+                        Status = 200,
+                        Success = true,
+                        FeeTypes = res,
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Success = false,
+                        Status = 500,
+                        Message = "Internal server error",
+                    }
+                );
+            }
+        }
+
+        [HttpPost("add/feeStructure")]
+        public async Task<IActionResult> AddFeeStructure(
+            [FromBody] AddFeeStructureAmountRequestDTO dto
+        )
+        {
+            try
+            {
+                var res = await _adminSectionService.AddFeeStructure(dto);
+                return StatusCode((int)res.Status, res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Status = 500,
+                        Success = false,
+                        Message = "Internal Server error",
                     }
                 );
             }

@@ -8,7 +8,7 @@
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'
           rel='stylesheet'>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" integrity="sha512-O03ntXoVqaGUTAeAmvQ2YSzkCvclZEcPQu1eqloPaHfJ5RuNGiS4l+3duaidD801P50J28EHyonCV06CUlTSag==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="common-sidebar.css" />
 </head>
 <body>
@@ -88,11 +88,39 @@
             </div>
 
             <!--Main content-->
-            <div></div>
+            <div class="col-md-9 col-lg-10 p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-2">Standard Fee Mapping Management</h2>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5 mt-lg-5 d-flex flex-column gap-3">
+                        <div class="card p-4">
+                            <label class="mb-2" for="stdName">Select a standard to proceed</label>
+                            <select id="stdName">
+                                <option value="">Select Standard</option>
+                            </select>
+                        </div>
+
+                        <div id="selectedStandardContainer"></div>
+                    </div>
+                    <div class="col-md-5 visually-hidden d-flex flex-column justify-content-center" id="outerDivFeeTypes">
+                        <div class="card overflow-auto" style="max-height : 400px">
+                            <p class="text-center p-3 border-bottom">Select from the below fee types</p>
+                            <div id="feeTypesCheckBox" class="p-4"></div>
+                        </div>
+
+                        <button class="btn btn-primary btn-sm" onclick="addStdFeeMappingBtn()">ADD</button>
+
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="Js/fee-section.js"></script>
 </body>
 </html>

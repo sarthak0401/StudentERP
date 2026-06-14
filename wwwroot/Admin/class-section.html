@@ -77,13 +77,12 @@
 
         <div class="container-fluid">
             <div class="row">
-
                 <!-- Sidebar -->
                 <div class="col-md-2 col-lg-2 sidebar p-0">
                     <ul class="nav flex-column mt-3">
 
                         <li class="nav-item">
-                            <a href="index.html" class="nav-link ">
+                            <a href="index.html" class="nav-link">
                                 <i class='bx bxs-dashboard me-2'></i>
                                 Dashboard
                             </a>
@@ -103,10 +102,37 @@
                             </a>
                         </li>
 
-
+                        <li class="nav-item">
+                            <a href="#feeMenu" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                <i class='bx bx-wallet me-2'></i>Fee Management
+                            </a>
+                            <div id="feeMenu" class="collapse">
+                                <ul class="nav flex-column ms-5">
+                                    <li class="nav-item">
+                                        <a href="fee-section-FeeTypes.html" class="nav-link">
+                                            <i class='bx bx-purchase-tag'></i>
+                                            Fee Types
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="fee-section-ClassFeeMap.html" class="nav-link">
+                                            <i class='bx bx-link-alt'></i>
+                                            Class Fee Mapping
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="fee-section-FeeStructure.html" class="nav-link ">
+                                            <i class='bx bx-spreadsheet'></i>
+                                            Fee Structure
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
                     </ul>
 
                 </div>
+
 
                 <!-- Content -->
                 <div class="col-md-9 col-lg-10 p-4">
@@ -216,18 +242,7 @@
                             <select class="form-select"
                                     id="classname">
 
-                                <option value="1">Grade 1</option>
-                                <option value="2">Grade 2</option>
-                                <option value="3">Grade 3</option>
-                                <option value="4">Grade 4</option>
-                                <option value="5">Grade 5</option>
-                                <option value="6">Grade 6</option>
-                                <option value="7">Grade 7</option>
-                                <option value="8">Grade 8</option>
-                                <option value="9">Grade 9</option>
-                                <option value="10">Grade 10</option>
-                                <option value="11">Grade 11</option>
-                                <option value="12">Grade 12</option>
+                                <option value="">Select Grade</option>
 
                             </select>
                         </div>
@@ -271,12 +286,46 @@
                     </div>
 
                 </div>
-
             </div>
 
         </div>
 
         <script>
+
+            function editClass() {
+
+            }
+
+            async function loadStandards() {
+                const dropdown = document.getElementById("classname");
+
+                try {
+                    const response = await fetch("https://localhost:7098/api/admin/get/standards", {
+                        method: "GET",
+                        headers: {
+                            "Content-type" : "application/json"
+                        }
+                    });
+
+                    const standards = await response.json();
+
+                    standards.standards.forEach(standard => {
+                        const option = document.createElement("option");
+
+                        option.value = standard.standardId;
+                        option.textContent = `Grade ${standard.standardName}`;
+
+                        dropdown.appendChild(option);
+                    });
+
+                }
+                catch (err) {
+                    console.error(err);
+                }
+            }
+
+
+            loadStandards();
 
             async function addSubjToClass() {
 
@@ -423,9 +472,9 @@
                     res.forEach(item => {
                         console.log(item);
                         tableBody.innerHTML += `
-                                <tr onClick="classSubSelect('${index}','${item.cid}', '${item.cname}', '${item.section}', '${item.capacity}', '${item.status}')">
+                                <tr onClick="classSubSelect('${index}','${item.cid}', '${item.standardName}', '${item.section}', '${item.capacity}', '${item.status}')">
                                     <td> ${index++}</td>
-                                    <td> ${item.cname}</td>
+                                    <td> ${item.standardName}</td>
                                     <td> ${item.section}</td>
                                     <td> ${item.capacity}</td>
                                     <td> ${item.status}</td>
@@ -476,12 +525,12 @@
 
 
             async function saveClass() {
-                var classx = document.getElementById("classname").value;
+                var standardId = document.getElementById("classname").value;
                 var section = document.getElementById("sectionName").value.trim().toUpperCase();
                 var capacity = document.getElementById("capacity").value;
                 var status = document.getElementById("status").value.trim().toUpperCase();
 
-                console.log(classx, section, capacity, status);
+                console.log(standardId, section, capacity, status);
 
 
                 try {
@@ -491,7 +540,7 @@
                             "Content-type": "application/json"
                         },
                         body: JSON.stringify({
-                            "ClassN": classx,
+                            "StandardId": parseInt(standardId),
                             "Section": section,
                             "Capacity": capacity,
                             "Status": status
@@ -538,6 +587,7 @@
 
             }
 
+           
 
         </script>
 

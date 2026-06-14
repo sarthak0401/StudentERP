@@ -8,7 +8,7 @@
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'
           rel='stylesheet'>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" integrity="sha512-O03ntXoVqaGUTAeAmvQ2YSzkCvclZEcPQu1eqloPaHfJ5RuNGiS4l+3duaidD801P50J28EHyonCV06CUlTSag==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="common-sidebar.css" />
 </head>
 <body>
@@ -88,11 +88,168 @@
             </div>
 
             <!--Main content-->
-            <div></div>
+            <div class="col-md-10 col-lg-10 p-4">
+                <div>
+                    <h2 class="mb-2">Standard Fee-Structure Management</h2>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5 mt-lg-5">
+                        <div class="card p-4">
+                            <label class="mb-2" for="StdFeeStructureStd">Select a standard to proceed with the Fee-structure </label>
+                            <select id="StdFeeStructureStd">
+                                <option value="">Select a standard</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="outerDivFeeStructure" class="d-flex mt-5 flex-column justify-content-center visually-hidden">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Sr No</th>
+                                <th>Fee Type Name</th>
+                                <th>Amount</th>
+                            </tr>
+                            <tbody id="feeTypeAmtTableBody"></tbody>
+                        </table>
+                        <button class="m-auto" onclick="StdFeeTypesAmtSubmit()">Submit</button>
+                    </div>
+
+                </div>
+            </div>
 
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        async function loadStandardsFeeStructureSection() {
+            const dropdownStd = document.getElementById("StdFeeStructureStd");
+
+            try {
+                const response = await fetch("https://localhost:7098/api/admin/get/standards", {
+                    method: "GET",
+                    headers: {
+                        "Content-type": "application/json"
+                    }
+                });
+
+                const res = await response.json();
+
+                console.log(res);
+                res.standards?.forEach(standard => {
+                    const option = document.createElement("option");
+
+                    option.value = standard.standardId;
+                    option.textContent = `Standard - ${standard.standardName}`;
+
+                    dropdownStd.appendChild(option);
+                });
+            }
+            catch (err) {
+                console.error(err);
+            }
+        }
+
+        loadStandardsFeeStructureSection();
+
+        // Adding the event listener to this dropdown, when a particular thing is selected in it, CHANGE will happen, and that will trigger this
+        const stdDropdown = document.getElementById("StdFeeStructureStd");
+        stdDropdown.addEventListener("change", async function () {
+            const val = stdDropdown.value;
+            try {
+                const response = await fetch(`https://localhost:7098/api/admin/get/feeTypes/StdId/${parseInt(val)}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-type": "application/json"
+                    }
+                });
+                const res = await response.json();
+
+                const tableBody = document.getElementById("feeTypeAmtTableBody");
+                tableBody.innerHTML = "";
+
+                var index = 1;
+
+                if (res.feeTypes.length == 0) {
+                    iziToast.error({
+                        title: "ERROR!",
+                        message: "No fee types mapping found for this standard! Please map fee types for this standard first"
+                    });
+                    return;
+                }
+                res.feeTypes.forEach(ft => {
+                    tableBody.innerHTML += `
+                            <tr>
+                                <td>${index++}</td>
+                                <td>${ft.feeTypeName}</td>
+                                <td><input type="number" class="fee-amount" data-mapid="${ft.standardFeeMapId}" /></td>
+                            </tr>
+                        `;
+                });
+                document.getElementById("outerDivFeeStructure").classList.remove("visually-hidden");
+            }
+            catch (err) {
+                console.error(err);
+            }
+        });
+
+
+
+        async function StdFeeTypesAmtSubmit() {
+            const feeStructures = [];
+            document.querySelectorAll(".fee-amount").forEach(input => {
+                feeStructures.push({
+                    standardFeeMapId: parseInt(input.dataset.mapid),
+                    amount: parseFloat(input.value)
+                });
+            });
+
+            console.log(feeStructures);
+            try {
+                const response = await fetch("https://localhost:7098/api/admin/add/feeStructure", {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        feeStructures: feeStructures
+                    })
+                });
+
+                const res = await response.json();
+                if (res.success) {
+                    iziToast.success({
+                        title: "OK!",
+                        message: "Fee Structure added successfully!"
+                    });
+                }
+                else {
+                    iziToast.error({
+                        title: "ERROR!",
+                        message: "Error adding fee structure"
+                    });
+                }
+
+            }
+            catch (err) {
+                console.error(err);
+                iziToast.error({
+                    title: "ERROR!",
+                    message: "Error adding fee structure"
+                });
+            } finally {
+                document.querySelectorAll(".fee-amount").forEach(input => { input.value = "" });
+                const tableBody = document.getElementById("feeTypeAmtTableBody");
+                tableBody.innerHTML = "";
+
+                document.getElementById("outerDivFeeStructure").classList.add("visually-hidden");
+
+                document.getElementById("StdFeeStructureStd").value = "";
+
+            }
+        }
+    </script>
 </body>
-</html>v
+</html>
