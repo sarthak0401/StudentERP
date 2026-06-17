@@ -2,6 +2,7 @@
 using System.Data.Common;
 using System.Transactions;
 using System.Xml;
+using System.Xml.Linq;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Project_StudentERP.DTOs;
@@ -33,37 +34,28 @@ namespace Project_StudentERP.Services
                     _configuration.GetConnectionString("DefaultConnection")
                 );
 
-                var param = new
-                {
-                    ClassName = dto.ClassName,
-                    SectionId = dto.SectionId,
-                    Capacity = dto.Capacity,
-                    IsActive = dto.Status,
-                };
-                int rowAffected = conn.Execute(
-                    "sp_addClass",
-                    param,
-                    commandType: CommandType.StoredProcedure
-                );
+                DataTable dt = new DataTable();
+                dt.Columns.Add("SectionId", typeof(int));
 
-                if (rowAffected > 0)
+                foreach (var x in dto.SectionIds)
                 {
-                    return new ClassAddResponseDTO
-                    {
-                        Status = 200,
-                        Message = "Insertion successfull",
-                        Success = true,
-                    };
+                    dt.Rows.Add(x);
                 }
-                else
+
+                var param = new DynamicParameters();
+                param.Add("@ClassName", dto.ClassName);
+                param.Add("@SectionIds", dt.AsTableValuedParameter("SectionIdsType"));
+                param.Add("@Capacity", dto.Capacity);
+                param.Add("@IsActive", dto.Status);
+
+                conn.Execute("sp_addClass", param, commandType: CommandType.StoredProcedure);
+
+                return new ClassAddResponseDTO
                 {
-                    return new ClassAddResponseDTO
-                    {
-                        Status = 500,
-                        Message = "Internal server error",
-                        Success = false,
-                    };
-                }
+                    Status = 200,
+                    Message = "Insertion successfull",
+                    Success = true,
+                };
             }
             catch (Exception ex)
             {
@@ -318,8 +310,9 @@ namespace Project_StudentERP.Services
                 };
 
                 int rowsAffected = conn.Execute(
-                    "insert into Subjects(SNAME, SCODE, SCREDITS) values (@sname, @scode, @scredits)",
-                    param
+                    "sp_addSubject",
+                    param,
+                    commandType: CommandType.StoredProcedure
                 );
 
                 if (rowsAffected > 0)
@@ -363,7 +356,7 @@ namespace Project_StudentERP.Services
 
             var parameters = new DynamicParameters();
 
-            parameters.Add("@ClassId", dto.classId);
+            parameters.Add("@ClassSectionId", dto.classSectionId);
 
             parameters.Add("@Subjects", dt.AsTableValuedParameter("SubjectIdTableType"));
 
@@ -374,7 +367,7 @@ namespace Project_StudentERP.Services
                 );
 
                 conn.Execute(
-                    "sp_AssignSubjectstToClass",
+                    "sp_AssignSubjectstToClassSection",
                     parameters,
                     commandType: CommandType.StoredProcedure
                 );
@@ -583,7 +576,7 @@ namespace Project_StudentERP.Services
             }
         }
 
-        public List<SubjectModel> GetAllSubjects()
+        public GetAllSubjectsResponseDTO GetAllSubjects(int? csid)
         {
             try
             {
@@ -591,14 +584,75 @@ namespace Project_StudentERP.Services
                     _configuration.GetConnectionString("DefaultConnection")
                 );
 
-                var res = conn.Query<SubjectModel>("select * from Subjects").ToList();
+                var res = conn.Query<SubjectModel>(
+                        "sp_getAllSubjects",
+                        new { csid = csid == null ? null : csid },
+                        commandType: CommandType.StoredProcedure
+                    )
+                    .ToList();
 
-                return res;
+                return new GetAllSubjectsResponseDTO
+                {
+                    Success = true,
+                    Status = 200,
+                    Message = "Get subjects successfull",
+                    Subjects = res,
+                };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return new List<SubjectModel>();
+                return new GetAllSubjectsResponseDTO
+                {
+                    Status = 500,
+                    Success = false,
+                    Message = "Internal Server error",
+                };
+            }
+        }
+
+        public DeleteSubjectResponseDTO DeleteSubject(int id)
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                int rowAffected = conn.Execute(
+                    "sp_deleteSubject",
+                    new { Id = id },
+                    commandType: CommandType.StoredProcedure
+                );
+
+                if (rowAffected > 0)
+                {
+                    return new DeleteSubjectResponseDTO
+                    {
+                        Success = true,
+                        Status = 200,
+                        Message = "Deletion successfull",
+                    };
+                }
+                else
+                {
+                    return new DeleteSubjectResponseDTO
+                    {
+                        Success = false,
+                        Status = 400,
+                        Message = "Deletion unsuccessfull, bad request",
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new DeleteSubjectResponseDTO
+                {
+                    Success = false,
+                    Status = 500,
+                    Message = "Internal server error",
+                };
             }
         }
     }

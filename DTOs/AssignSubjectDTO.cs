@@ -2,7 +2,7 @@
 {
     public class AssignSubjectDTO
     {
-        public int classId { get; set; }
+        public int classSectionId { get; set; }
         public List<int> subjectIds { get; set; } = new();
     }
 }

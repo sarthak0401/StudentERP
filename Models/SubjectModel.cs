@@ -7,5 +7,7 @@
         public string SCODE { get; set; }
 
         public int SCREDITS { get; set; }
+
+        public int Checked { get; set; }
     }
 }

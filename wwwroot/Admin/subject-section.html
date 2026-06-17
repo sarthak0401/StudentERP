@@ -122,12 +122,6 @@
                                         Class Fee Mapping
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="fee-section-FeeStructure.html" class="nav-link">
-                                        <i class='bx bx-spreadsheet'></i>
-                                        Fee Structure
-                                    </a>
-                                </li>
                             </ul>
                         </div>
                     </li>
@@ -282,7 +276,7 @@
 
                     let index = 1;
 
-                    res.forEach(item => {
+                    res.subjects.forEach(item => {
 
                         tableBody.innerHTML += `
                     <tr>
@@ -297,7 +291,7 @@
                             </button>
 
                             <button class="btn btn-danger btn-sm"
-                                    onclick="deleteSubject(${item.subjectId})">
+                                    onclick="deleteSubject(${item.sid})">
                                 Delete
                             </button>
                         </td>

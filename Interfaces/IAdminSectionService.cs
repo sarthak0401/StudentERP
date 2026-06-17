@@ -23,6 +23,7 @@ namespace Project_StudentERP.Interfaces
         List<FeeTypeForParticularStd> GetAllFeeTypesForParticularStdId(int id);
         GetSectionsDTO GetAllSections();
         List<StandardResponseDTO> GetAllStandards();
-        List<SubjectModel> GetAllSubjects();
+        GetAllSubjectsResponseDTO GetAllSubjects(int? csid);
+        DeleteSubjectResponseDTO DeleteSubject(int id);
     }
 }

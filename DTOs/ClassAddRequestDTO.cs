@@ -2,8 +2,8 @@
 {
     public class ClassAddRequestDTO
     {
-        public string ClassName { get; set; }
-        public int SectionId { get; set; }
+        public string? ClassName { get; set; }
+        public List<int> SectionIds { get; set; } = [];
         public int Capacity { get; set; }
         public int Status { get; set; }
     }

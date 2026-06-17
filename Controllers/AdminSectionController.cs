@@ -107,13 +107,13 @@ namespace Project_StudentERP.Controllers
             }
         }
 
-        [HttpGet("get/subjects")]
-        public IActionResult GetAllSubjects()
+        [HttpGet("get/subjects/{csid?}")]
+        public IActionResult GetAllSubjects(int? csid)
         {
             try
             {
-                var res = _adminSectionService.GetAllSubjects();
-                return Ok(res);
+                var res = _adminSectionService.GetAllSubjects(csid);
+                return StatusCode(res.Status, res);
             }
             catch (Exception ex)
             {
@@ -122,9 +122,33 @@ namespace Project_StudentERP.Controllers
                     500,
                     new
                     {
-                        message = "Internal Server Error",
-                        success = false,
-                        status = 500,
+                        Message = "Internal Server Error",
+                        Success = false,
+                        Status = 500,
+                    }
+                );
+            }
+        }
+
+        [HttpDelete("del/subject/{id}")]
+        public IActionResult DeleteSubject(int id)
+        {
+            try
+            {
+                var res = _adminSectionService.DeleteSubject(id);
+
+                return StatusCode(res.Status, res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Success = false,
+                        Status = 500,
+                        Message = "Internal Server Error",
                     }
                 );
             }
@@ -135,7 +159,7 @@ namespace Project_StudentERP.Controllers
         {
             var res = _adminSectionService.AddSubjectsToClass(dto);
 
-            return Ok(res);
+            return StatusCode(res.Status, res);
         }
 
         [HttpPost("add/feeType")]
