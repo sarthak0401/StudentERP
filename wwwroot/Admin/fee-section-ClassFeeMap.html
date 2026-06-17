@@ -10,6 +10,106 @@
           rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" integrity="sha512-O03ntXoVqaGUTAeAmvQ2YSzkCvclZEcPQu1eqloPaHfJ5RuNGiS4l+3duaidD801P50J28EHyonCV06CUlTSag==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="common-sidebar.css" />
+    <style>
+        body {
+            background-color: #f5f7fa;
+        }
+
+        /* Page Title */
+        h2 {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* Card Styling */
+        .custom-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            background: #fff;
+        }
+
+        /* Dropdown */
+        #stdName {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #dcdfe4;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+            #stdName:focus {
+                outline: none;
+                border-color: #0d6efd;
+                box-shadow: 0 0 0 3px rgba(13,110,253,.15);
+            }
+
+        /* Fee Mapping Container */
+        #outerDivFeeTypes {
+            border: none;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 2px 12px rgba(0,0,0,.08);
+        }
+
+        /* Section Header */
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        /* Table */
+        .table {
+            margin-bottom: 0;
+        }
+
+            .table thead th {
+                background-color: #f8f9fa;
+                color: #495057;
+                font-weight: 600;
+                vertical-align: middle;
+            }
+
+            .table tbody tr {
+                transition: background-color 0.2s ease;
+            }
+
+                .table tbody tr:hover {
+                    background-color: #f8fbff;
+                }
+
+        /* Amount Inputs */
+        .fee-amount {
+            max-width: 160px;
+            border-radius: 8px;
+        }
+
+        /* Checkbox */
+        .ft-checkbox {
+            transform: scale(1.15);
+            cursor: pointer;
+        }
+
+        /* Button */
+        .btn-add-mapping {
+            min-width: 180px;
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 10px 20px;
+        }
+
+        /* Label */
+        .form-label-custom {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        /* Animation */
+        #outerDivFeeTypes {
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-light border-bottom">
@@ -95,32 +195,281 @@
 
                 <div class="row">
                     <div class="col-md-5 mt-lg-5 d-flex flex-column gap-3">
-                        <div class="card p-4">
-                            <label class="mb-2" for="stdName">Select a standard to proceed</label>
+                        <div class="card custom-card p-4">
+                            <label class="form-label-custom mb-2" for="stdName">
+                                Select Class
+                            </label>
+
                             <select id="stdName">
-                                <option value="">Select Standard</option>
+                                <option value="">Choose Class...</option>
                             </select>
                         </div>
-
-                        <div id="selectedStandardContainer"></div>
                     </div>
-                    <div class="col-md-5 visually-hidden d-flex flex-column justify-content-center" id="outerDivFeeTypes">
-                        <div class="card overflow-auto" style="max-height : 400px">
-                            <p class="text-center p-3 border-bottom">Select from the below fee types</p>
-                            <div id="feeTypesCheckBox" class="p-4"></div>
-                        </div>
 
-                        <button class="btn btn-primary btn-sm" onclick="addStdFeeMappingBtn()">ADD</button>
+                    <div id="outerDivFeeTypes"
+                         class="d-flex mt-5 flex-column visually-hidden col-md-11 m-auto p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <span class="section-title">
+                                Fee Types & Amount Configuration
+                            </span>
+                        </div>
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th width="10%">Select</th>
+                                    <th width="50%">Fee Type Name</th>
+                                    <th width="40%">Amount (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feeTypeAmtTableBody2"></tbody>
+                        </table>
+                        <div class="text-center mt-4">
+                            <button class="btn btn-primary btn-add-mapping"
+                                    onclick="addClassFeeMappingBtn()">
+                                <i class='bx bx-plus-circle me-2'></i>
+                                Save Fee Mapping
+                            </button>
+                        </div>
+                    </div>
+                       
 
                     </div>
                 </div>
             </div>
 
         </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="Js/fee-section.js"></script>
+    <script>
+        async function loadClasses() {
+            const dropdown = document.getElementById("stdName");
+
+            try {
+                const response = await fetch("https://localhost:7098/api/admin/get/classes", {
+                    method: "GET",
+                    headers: {
+                        "Content-type": "application/json"
+                    }
+                });
+
+                const res = await response.json();
+
+                console.log("Classes:", res);
+
+                res.forEach(item => {
+                    const option = document.createElement("option");
+
+                    option.value = item.csId;
+                    option.textContent = `${item.className} - ${item.sectionName}`;
+
+                    dropdown.appendChild(option);
+                });
+            }
+            catch (err) {
+                console.error("Error loading classes:", err);
+            }
+        }
+
+        loadClasses();
+
+        document.getElementById("stdName").addEventListener("change", async function () {
+
+            const classSectionId = parseInt(this.value);
+
+            if (!classSectionId) {
+                document.getElementById("feeTypeAmtTableBody2").innerHTML = "";
+                return;
+            }
+
+            try {
+
+                console.log("Selected Class Section MappingId:", classSectionId);
+
+                const response = await fetch(
+                    `https://localhost:7098/api/admin/get/feeType/${classSectionId}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    }
+                );
+
+                const res = await response.json();
+
+                console.log("Fee Types:", res);
+
+                const tableBody = document.getElementById("feeTypeAmtTableBody2");
+
+                tableBody.innerHTML = "";
+
+                if (!res.feeTypes || res.feeTypes.length === 0) {
+
+                    iziToast.error({
+                        title: "ERROR",
+                        message: "No Fee Types Found!"
+                    });
+
+                    return;
+                }
+
+                res.feeTypes.forEach(ft => {
+
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td class="text-center">
+                                <input
+                                    type="checkbox"
+                                    class="ft-checkbox"
+                                    value="${ft.feeTypeId}"
+                                    ${ft.checked==1 ? "checked" : ""}>
+                            </td>
+
+                            <td>
+                                ${ft.feeTypeName}
+                            </td>
+
+                            <td>
+                                <input
+                                    type="number"
+                                    class="form-control fee-amount"
+                                    id="fs-amt-${ft.feeTypeId}"
+                                    placeholder="Enter amount"
+                                    min="0"
+                                    value="${ft.amount || ''}"
+                                    ${ft.checked==1 ? "" : "disabled" }
+                                   >
+                            </td>
+                        </tr>
+                        `;
+                });
+
+
+                document.querySelectorAll(".ft-checkbox").forEach(cb => {
+
+                    cb.addEventListener("change", function () {
+
+                        const feeTypeId = this.value;
+
+                        const amountInput = document.getElementById(`fs-amt-${feeTypeId}`);
+
+                        amountInput.disabled = !this.checked;
+
+                        // if (!this.checked) {
+                        //     amountInput.value = "";
+                        // }
+                    });
+
+                });
+
+                document
+                    .getElementById("outerDivFeeTypes")
+                    .classList.remove("visually-hidden");
+
+            }
+            catch (err) {
+                console.error("Error loading fee types:", err);
+
+                iziToast.error({
+                    title: "ERROR",
+                    message: "Failed to load fee types!"
+                });
+            }
+        });
+
+        async function addClassFeeMappingBtn() {
+
+            const classSectionId = document.getElementById("stdName").value;
+
+            const feeMappings = [];
+
+            document.querySelectorAll(".ft-checkbox").forEach(cb => {
+
+                if (cb.checked) {
+
+                    const feeTypeId = parseInt(cb.value);
+
+                    const amount = parseFloat(
+                        document.getElementById(`fs-amt-${feeTypeId}`).value || 0
+                    );
+
+                    feeMappings.push({
+                        feeTypeId: feeTypeId,
+                        amount: amount
+                    });
+                }
+            });
+
+            console.log("Submitting:", {
+                classSectionId,
+                feeMappings
+            });
+
+            if (feeMappings.length == 0) {
+                iziToast.error({
+                    title: "ERROR",
+                    message: "No fee types selected! Please select atleast one fee type to continue"
+                });
+                return;
+            }
+            try {
+
+                const response = await fetch(
+                    "https://localhost:7098/api/admin/add/classSectionFeeMap",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            ClassSectionId: parseInt(classSectionId),
+                            feeMappings: feeMappings
+                        })
+                    }
+                );
+
+                const res = await response.json();
+
+                if (res.success) {
+
+                    iziToast.success({
+                        title: "SUCCESS",
+                        message: "Fee Mapping Added!"
+                    });
+                    document.getElementById("outerDivFeeTypes").classList.add("visually-hidden");
+
+                } else {
+
+                    iziToast.error({
+                        title: "ERROR",
+                        message: "Failed to add mapping!"
+                    });
+                }
+
+            }
+            catch (err) {
+
+                console.error(err);
+
+                iziToast.error({
+                    title: "ERROR",
+                    message: "Server Error!"
+                });
+            }
+            finally {
+                document.getElementById("stdName").value = "";
+                document.querySelectorAll(".ft-checkbox").forEach(cb => {
+                    cb.checked = false;
+                });
+
+                document.querySelectorAll(".fee-amount").forEach(input => {
+                    input.value = "";
+                });
+            }
+        }
+
+
+        
+    </script>
 </body>
 </html>

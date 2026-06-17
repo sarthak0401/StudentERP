@@ -114,5 +114,51 @@ namespace Project_StudentERP.Controllers
             var contacts = _administrationService.getAllContacts(id);
             return StatusCode(200, new { Success = true, Contacts = contacts });
         }
+
+        [HttpGet("get/classSectionFeeType/{id}")]
+        public IActionResult GetAllFeeTypesForParticularClassSection(int id)
+        {
+            try
+            {
+                var res = _administrationService.GetAllFeeTypesForParticularClassSection(id);
+                return StatusCode(res.Status, res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Success = false,
+                        Status = 500,
+                        Message = "Internal Server error",
+                    }
+                );
+            }
+        }
+
+        [HttpPost("student/addmission")]
+        public IActionResult StudentAdmission([FromBody] AdmissionStudentRequestDTO dto)
+        {
+            try
+            {
+                var res = _administrationService.StudentAdmission(dto);
+                return StatusCode(res.Status, res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Status = 500,
+                        Success = false,
+                        Message = "Internal Server Error",
+                    }
+                );
+            }
+        }
     }
 }

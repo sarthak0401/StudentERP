@@ -161,12 +161,12 @@ namespace Project_StudentERP.Controllers
             }
         }
 
-        [HttpGet("get/feeType")]
-        public IActionResult GetAllFeeTypes()
+        [HttpGet("get/feeType/{csid?}")]
+        public IActionResult GetAllFeeTypes(int? csid)
         {
             try
             {
-                var res = _adminSectionService.GetAllFeeTypes();
+                var res = _adminSectionService.GetAllFeeTypes(csid);
                 return StatusCode(
                     200,
                     new
@@ -238,12 +238,12 @@ namespace Project_StudentERP.Controllers
             );
         }
 
-        [HttpPost("add/stdFeeMap")]
-        public IActionResult AddStdFeeMapping([FromBody] AddStdFeeTypeMappingRequestDTO dto)
+        [HttpPost("add/classSectionFeeMap")]
+        public IActionResult AddStdFeeMapping([FromBody] AddClassFeeTypeMappingRequestDTO dto)
         {
             try
             {
-                var res = _adminSectionService.AddStdFeeMapping(dto);
+                var res = _adminSectionService.AddClassSectionFeeMapping(dto);
                 return StatusCode(res.Status, res);
             }
             catch (Exception ex)
@@ -314,6 +314,13 @@ namespace Project_StudentERP.Controllers
                     }
                 );
             }
+        }
+
+        [HttpGet("get/sections")]
+        public IActionResult GetAllSections()
+        {
+            var res = _adminSectionService.GetAllSections();
+            return StatusCode(res.Status, res);
         }
     }
 }

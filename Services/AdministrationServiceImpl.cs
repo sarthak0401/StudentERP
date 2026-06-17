@@ -113,6 +113,44 @@ namespace Project_StudentERP.Services
             }
         }
 
+        public GetAllFeeTypesForParticularClassSectionResponseDTO GetAllFeeTypesForParticularClassSection(
+            int id
+        )
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                List<RowTemplateForFeeTypesOfParticularClassSection> fmList =
+                    conn.Query<RowTemplateForFeeTypesOfParticularClassSection>(
+                            "sp_getAllFeeTypesForParticularClassSection",
+                            new { CSId = id },
+                            commandType: CommandType.StoredProcedure
+                        )
+                        .ToList();
+
+                return new GetAllFeeTypesForParticularClassSectionResponseDTO
+                {
+                    Success = true,
+                    Status = 200,
+                    fmLists = fmList,
+                    Message = "Successful operation",
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new GetAllFeeTypesForParticularClassSectionResponseDTO
+                {
+                    Status = 500,
+                    Success = false,
+                    Message = "Internal server error",
+                };
+            }
+        }
+
         public List<Student>? GetAllStudents()
         {
             try
@@ -174,6 +212,33 @@ namespace Project_StudentERP.Services
             {
                 _logger.LogError(ex, ex.Message);
                 return null;
+            }
+        }
+
+        public AdmissionStudentResponseDTO StudentAdmission(AdmissionStudentRequestDTO dto)
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                return new AdmissionStudentResponseDTO
+                {
+                    Success = true,
+                    Status = 200,
+                    Message = "Student admitted successfully",
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new AdmissionStudentResponseDTO
+                {
+                    Status = 500,
+                    Message = "Internal Server Error",
+                    Success = false,
+                };
             }
         }
     }

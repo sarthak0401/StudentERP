@@ -2,10 +2,13 @@
 {
     public class ClassModel
     {
-        public int CID { get; set; }
-        public string SECTION { get; set; }
-        public int CAPACITY { get; set; }
-        public string STATUS { get; set; }
-        public string StandardName { get; set; }
+        public int CSId { get; set; }
+        public string SectionName { get; set; }
+        public int Capacity { get; set; }
+        public string ClassName { get; set; }
+        public int CId { get; set; }
+        public int SId { get; set; }
+
+        public int status { get; set; }
     }
 }

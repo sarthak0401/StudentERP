@@ -1,8 +1,11 @@
 ﻿using System.Data;
+using System.Data.Common;
+using System.Transactions;
 using System.Xml;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Project_StudentERP.DTOs;
+using Project_StudentERP.DTOs.DTOs_new;
 using Project_StudentERP.Interfaces;
 using Project_StudentERP.Models;
 
@@ -32,17 +35,18 @@ namespace Project_StudentERP.Services
 
                 var param = new
                 {
-                    standardId = dto.StandardId,
-                    section = dto.Section,
-                    capacity = dto.Capacity,
-                    status = dto.Status,
+                    ClassName = dto.ClassName,
+                    SectionId = dto.SectionId,
+                    Capacity = dto.Capacity,
+                    IsActive = dto.Status,
                 };
                 int rowAffected = conn.Execute(
-                    "insert into Classes(SECTION,CAPACITY,STATUS, StandardId) values(@section, @capacity, @status, @standardId)",
-                    param
+                    "sp_addClass",
+                    param,
+                    commandType: CommandType.StoredProcedure
                 );
 
-                if (rowAffected == 1)
+                if (rowAffected > 0)
                 {
                     return new ClassAddResponseDTO
                     {
@@ -190,62 +194,112 @@ namespace Project_StudentERP.Services
             }
         }
 
-        public AddStdFeeTypeMappingResponseDTO AddStdFeeMapping(AddStdFeeTypeMappingRequestDTO dto)
+        public AddClassFeeTypeMappingResponseDTO AddClassSectionFeeMapping(
+            AddClassFeeTypeMappingRequestDTO dto
+        )
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("FeeTypeId", typeof(int));
+            using SqlConnection conn = new SqlConnection(
+                _configuration.GetConnectionString("DefaultConnection")
+            );
 
-            foreach (var x in dto.FeeTypes)
-            {
-                Console.WriteLine(x);
-                dt.Rows.Add(x);
-            }
+            conn.Open();
 
+            using var transaction = conn.BeginTransaction();
             try
             {
-                using SqlConnection conn = new SqlConnection(
-                    _configuration.GetConnectionString("DefaultConnection")
+                // See in the schema we have on delete cascade for FeeStructureCls so when the entry in parent table i.e, ClassFeeType gets deleted, automatically that linked entries in child table will get deleted as well
+
+                conn.Execute(
+                    "DELETE FROM ClassSectionFeeType WHERE CSId = @ClassSectionId",
+                    new { dto.ClassSectionId },
+                    transaction
                 );
 
-                var param = new DynamicParameters();
-                param.Add("@StdId", dto.StdId);
-                param.Add("@FeeTypes", dt.AsTableValuedParameter("StdFeeTypes"));
-
-                int rowsAffected = conn.Execute(
-                    "sp_addStdFeeTypes",
-                    param,
-                    commandType: CommandType.StoredProcedure
-                );
-
-                if (rowsAffected > 0)
+                foreach (var x in dto.feeMappings)
                 {
-                    return new AddStdFeeTypeMappingResponseDTO
-                    {
-                        Status = 200,
-                        Success = true,
-                        Message = "Mapping done successfully",
-                    };
+                    Console.WriteLine("ClassId " + dto.ClassSectionId);
+                    Console.WriteLine("FeeId " + x.feeTypeId);
+                    Console.WriteLine("FeeAmount " + x.amount);
+                    Console.WriteLine("---------------");
+
+                    conn.Execute(
+                        "sp_addClassSectionFeeTypes",
+                        new
+                        {
+                            csid = dto.ClassSectionId,
+                            ftid = x.feeTypeId,
+                            amt = x.amount,
+                        },
+                        transaction,
+                        commandType: CommandType.StoredProcedure
+                    );
                 }
-                else
+
+                transaction.Commit();
+
+                return new AddClassFeeTypeMappingResponseDTO
                 {
-                    return new AddStdFeeTypeMappingResponseDTO
-                    {
-                        Status = 400,
-                        Success = false,
-                        Message = "Mapping failed!",
-                    };
-                }
+                    Status = 200,
+                    Success = true,
+                    Message = "Mapping done successfully",
+                };
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
                 _logger.LogError(ex, ex.Message);
-                return new AddStdFeeTypeMappingResponseDTO
+                return new AddClassFeeTypeMappingResponseDTO
                 {
                     Status = 500,
-                    Message = "Internal Server error",
                     Success = false,
+                    Message = "Internal server error",
                 };
             }
+            //try
+            //{
+            //    using SqlConnection conn = new SqlConnection(
+            //        _configuration.GetConnectionString("DefaultConnection")
+            //    );
+
+            //    var param = new DynamicParameters();
+            //    param.Add("@StdId", dto.StdId);
+            //    param.Add("@FeeTypes", dt.AsTableValuedParameter("StdFeeTypes"));
+
+            //    int rowsAffected = conn.Execute(
+            //        "sp_addStdFeeTypes",
+            //        param,
+            //        commandType: CommandType.StoredProcedure
+            //    );
+
+            //    if (rowsAffected > 0)
+            //    {
+            //        return new AddStdFeeTypeMappingResponseDTO
+            //        {
+            //            Status = 200,
+            //            Success = true,
+            //            Message = "Mapping done successfully",
+            //        };
+            //    }
+            //    else
+            //    {
+            //        return new AddStdFeeTypeMappingResponseDTO
+            //        {
+            //            Status = 400,
+            //            Success = false,
+            //            Message = "Mapping failed!",
+            //        };
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError(ex, ex.Message);
+            //    return new AddStdFeeTypeMappingResponseDTO
+            //    {
+            //        Status = 500,
+            //        Message = "Internal Server error",
+            //        Success = false,
+            //    };
+            //}
         }
 
         public SubjectAddResponseDTO AddSubject(SubjectAddRequestDTO dto)
@@ -374,8 +428,9 @@ namespace Project_StudentERP.Services
                 );
 
                 int rowAffected = await conn.ExecuteAsync(
-                    "delete from FeeType where FeeTypeId = @Id",
-                    new { Id = id }
+                    "sp_deleteFeeType",
+                    new { Id = id },
+                    commandType: CommandType.StoredProcedure
                 );
 
                 if (rowAffected > 0)
@@ -429,7 +484,7 @@ namespace Project_StudentERP.Services
             }
         }
 
-        public List<FeeType> GetAllFeeTypes()
+        public List<FeeType> GetAllFeeTypes(int? csid)
         {
             try
             {
@@ -437,7 +492,12 @@ namespace Project_StudentERP.Services
                     _configuration.GetConnectionString("DefaultConnection")
                 );
 
-                var res = conn.Query<FeeType>("select * from FeeType").ToList();
+                var res = conn.Query<FeeType>(
+                        "sp_getAllFeeTypesSelectedForAParticularClsSection",
+                        new { csid = csid },
+                        commandType: CommandType.StoredProcedure
+                    )
+                    .ToList();
 
                 return res;
             }
@@ -469,6 +529,35 @@ namespace Project_StudentERP.Services
             {
                 _logger.LogError(ex, ex.Message);
                 return new List<FeeTypeForParticularStd>();
+            }
+        }
+
+        public GetSectionsDTO GetAllSections()
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                var res = conn.Query<Sections>("select * from SectionMaster").ToList();
+
+                return new GetSectionsDTO
+                {
+                    Status = 200,
+                    Success = true,
+                    sections = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new GetSectionsDTO
+                {
+                    Status = 500,
+                    Success = false,
+                    Message = "Internal server error",
+                };
             }
         }
 

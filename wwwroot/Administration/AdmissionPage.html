@@ -1,0 +1,275 @@
+﻿<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Admission Section</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'
+          rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" integrity="sha512-O03ntXoVqaGUTAeAmvQ2YSzkCvclZEcPQu1eqloPaHfJ5RuNGiS4l+3duaidD801P50J28EHyonCV06CUlTSag==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            min-height: 100vh;
+            border-right: 1px solid #dee2e6;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-link {
+            color: #495057;
+            padding: 12px 20px;
+            margin: 4px 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+            .nav-link:hover {
+                background-color: #e9ecef;
+                color: #212529;
+                transform: translateX(5px);
+            }
+
+        .active-menu {
+            background-color: #0d6efd !important;
+            color: white !important;
+        }
+
+            .active-menu i {
+                color: white !important;
+            }
+
+        /* Admin Profile */
+        .admin-profile {
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            border: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+            .dashboard-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            }
+
+            .dashboard-card i {
+                font-size: 40px;
+                margin-bottom: 10px;
+            }
+
+        .main-content {
+            background-color: #f8f9fa;
+        }
+
+        table {
+            cursor: pointer
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-white border-bottom shadow-sm">
+        <div class="container-fluid">
+
+            <a href="../dashboard.html"
+               class="navbar-brand fw-bold d-flex align-items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                     fill="#000000" viewBox="0 0 24 24">
+                    <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free-->
+                    <path d="m21.45 8.61-9-4.5a1 1 0 0 0-.89 0l-6 3-3 1.5-1 .5a1 1 0 0 0-.55.89v6h2v-5.38l2 1v3.83c0 2.06 3.12 4.56 7 4.56s7-2.49 7-4.56v-3.83l2.45-1.22c.34-.17.55-.52.55-.89s-.21-.72-.55-.89Zm-15 .29L12 6.12l6.76 3.38L12 12.88 5.24 9.5l1.21-.61ZM17 15.45c0 .76-2.11 2.56-5 2.56s-5-1.79-5-2.56v-2.83l4.55 2.28c.14.07.29.11.45.11s.31-.04.45-.11L17 12.62z"></path>
+                </svg> Student ERP
+            </a>
+
+            <span>
+                Welcome,
+                <strong>Administration</strong>
+            </span>
+
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Sidebar -->
+            <div class="col-md-2 col-lg-2 sidebar p-0">
+                <ul class="nav flex-column mt-3">
+
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <i class='bx bxs-dashboard me-2'></i>
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="AddStudent.html" class="nav-link">
+                            <i class='bx bxs-group me-2'></i>
+                            Add Student
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="AdmissionPage.html" class="nav-link active-menu">
+                            <i class='bx bxs-school me-2'></i>
+                            Admission
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class='bx bxs-book-open me-2'></i>
+                            Fee
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+            <!--main content-->
+            <div class="col-md-10 col-lg-10 p-4">
+                <h2 class="mb-2">Admission Section</h2>
+                <div class="row mt-lg-5 d-flex justify-content-between">
+
+                    <!-- Student Search Card -->
+                    <div class="col-md-6">
+                        <div class="card p-4">
+
+                            <div class="d-flex gap-3 align-items-center flex-wrap">
+                                <label for="stdntName">
+                                    Enter the name of the student to search
+                                </label>
+
+                                <input type="text"
+                                       id="stdntName"
+                                       placeholder="Enter the Name"
+                                       class="form-control w-auto" />
+
+                                <button class="btn btn-sm btn-primary"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#studentSearchModal"
+                                        onclick="searchStudentToE()">
+                                    Search
+                                </button>
+
+                                <input type="hidden" id="hiddenFieldStudentId" />
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Selected Details Card -->
+                    <div class="col-md-4" id="selectedDetailsDiv">
+                        <div class="card p-4 shadow-sm">
+                            <h5 class="mb-3">Selected Information</h5>
+
+                            <div class="mb-3">
+                                <strong>Student :</strong>
+                                <span id="selectedStudentName"
+                                      class="text-primary fw-bold">
+                                    Not Selected
+                                </span>
+                            </div>
+
+                            <div>
+                                <strong>Class :</strong>
+                                <span id="selectedClassName"
+                                      class="text-success fw-bold">
+                                    Not Selected
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Student Search Modal -->
+                <div class="modal fade" id="studentSearchModal" tabindex="-1">
+                    <div class="modal-dialog modal-fullscreen">
+                        <div class="modal-content">
+
+                            <div class="modal-body">
+
+                                <h1 class="text-center">Matching Students</h1>
+                                <p class="text-center">
+                                    Click on a student to select
+                                </p>
+
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Sr. No</th>
+                                            <th>Student Name</th>
+                                            <th>Contact</th>
+                                            <th>DOB</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="StudentsSearchList">
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary"
+                                        data-bs-dismiss="modal">
+                                    Close
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Class Selection Card -->
+                <div class="card col-md-6 p-4 mt-lg-2">
+                    <div class="d-flex gap-3 align-items-center">
+
+                        <p class="mb-0">
+                            Select a class from the available classes
+                        </p>
+
+                        <select id="className" class="form-select">
+                            <option value="">Select a class</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column visually-hidden" id="outerDivTable">
+                    <table class="table table-bordered mt-5">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Fee Type</th>
+                                <th>Amount</th>
+                                <th>Discount</th>
+                                <th>Final Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="AdmissionPageFeeTypesTable"></tbody>
+                    </table>
+
+                    <button class="btn btn-primary btn-sm m-auto" onclick="admitStudentbtnclick()">Admit student</button>
+                </div>
+            </div>
+    </div>
+        </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="Js/Admission.js"></script>
+</body>
+</html>

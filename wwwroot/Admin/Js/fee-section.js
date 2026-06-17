@@ -97,7 +97,7 @@ async function showAllFeeTypes() {
     tableBody.innerHTML = "";
 
     try {
-        const response = await fetch("https://localhost:7098/api/admin/get/feeType",
+        const response = await fetch(`https://localhost:7098/api/admin/get/feeType`,
             {
                 method: "GET",
                 headers: {
@@ -139,7 +139,7 @@ async function loadStandardsFeeMapSection() {
     const dropdownStd = document.getElementById("stdName");
 
     try {
-        const response = await fetch("https://localhost:7098/api/admin/get/standards", {
+        const response = await fetch("https://localhost:7098/api/admin/get/classes", {
             method: "GET",
             headers: {
                 "Content-type": "application/json"
@@ -149,11 +149,11 @@ async function loadStandardsFeeMapSection() {
         const res = await response.json();
 
         console.log(res);
-        res.standards?.forEach(standard => {
+        res.forEach(item => {
             const option = document.createElement("option");
 
-            option.value = standard.standardId;
-            option.textContent = `Standard - ${standard.standardName}`;
+            option.value = item.csId;
+            option.textContent = `${item.className} - ${item.sectionName}`;
 
             dropdownStd.appendChild(option);
         });
@@ -164,23 +164,6 @@ async function loadStandardsFeeMapSection() {
 }
 
 loadStandardsFeeMapSection();
-
-// Adding the event listener to this dropdown, when a particular thing is selected in it, CHANGE will happen, and that will trigger this
-const stdDropdown = document.getElementById("stdName");
-stdDropdown.addEventListener("change", function () {
-    const selectedText = stdDropdown.options[stdDropdown.selectedIndex].text;
-
-    document.getElementById("selectedStandardContainer").innerHTML = `
-        <div class="card mt-3">
-            <div class="card-body">
-                <h5>${selectedText}</h5>
-                <p>Select fee types for this standard.</p>
-            </div>
-        </div>
-    `;
-    document.getElementById("outerDivFeeTypes").classList.remove("visually-hidden");
-});
-
 
 
 async function feeTypesCheckBox() {
@@ -214,7 +197,7 @@ async function feeTypesCheckBox() {
             `;
             })
     }
-    catch {
+    catch(err) {
         console.error(err);
     }
 }

@@ -238,20 +238,18 @@
                     <div class="modal-body">
 
                         <div class="mb-3">
-                            <label>Class</label>
-                            <select class="form-select"
-                                    id="classname">
-
-                                <option value="">Select Grade</option>
-
-                            </select>
+                            <label>ClassName</label>
+                            <input type="text" id="classname" class="form-control"/>
                         </div>
 
                         <div class="mb-3">
                             <label>Section</label>
-                            <input type="text"
-                                   class="form-control"
-                                   id="sectionName">
+                            <select class="form-select"
+                                    id="sectionName">
+
+                                <option value="">Select Grade</option>
+
+                            </select>
                         </div>
 
                         <div class="mb-3">
@@ -264,8 +262,8 @@
                         <div class="mb-3">
                             <label>Status</label>
                             <select class="form-select" id="status">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
                             </select>
                         </div>
 
@@ -292,9 +290,33 @@
 
         <script>
 
-            function editClass() {
+            async function getAllSections() {
+                try {
+                    const response = await fetch("https://localhost:7098/api/admin/get/sections", {
+                        method: "GET",
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    });
 
+                    const res = await response.json();
+                    const dropdown = document.getElementById("sectionName");
+
+                    res.sections.forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = item.sId;
+                        option.textContent = `${item.sectionName}`;
+
+                        dropdown.appendChild(option);
+                    }) 
+                }
+                catch (err) {
+                    console.error(err);
+                }
             }
+
+            getAllSections();
+
 
             async function loadStandards() {
                 const dropdown = document.getElementById("classname");
@@ -472,15 +494,15 @@
                     res.forEach(item => {
                         console.log(item);
                         tableBody.innerHTML += `
-                                <tr onClick="classSubSelect('${index}','${item.cid}', '${item.standardName}', '${item.section}', '${item.capacity}', '${item.status}')">
+                                <tr onClick="classSubSelect('${index}','${item.csId}', '${item.className}', '${item.sectionName}', '${item.capacity}', '${item.status}')">
                                     <td> ${index++}</td>
-                                    <td> ${item.standardName}</td>
-                                    <td> ${item.section}</td>
+                                    <td> ${item.className}</td>
+                                    <td> ${item.sectionName}</td>
                                     <td> ${item.capacity}</td>
-                                    <td> ${item.status}</td>
+                                    <td> ${item.status==1 ? "Active" : "Inactive"}</td>
                                     <td>
                                         <button class="btn btn-warning btn-sm"> Edit</button>
-                                        <button class="btn btn-danger btn-sm" onClick="deleteClass(${item.cid})"> Delete</button>
+                                        <button class="btn btn-danger btn-sm" onClick="deleteClass(${item.csId})"> Delete</button>
                                     </td>
                                 </tr>
                             `;
@@ -525,12 +547,10 @@
 
 
             async function saveClass() {
-                var standardId = document.getElementById("classname").value;
-                var section = document.getElementById("sectionName").value.trim().toUpperCase();
-                var capacity = document.getElementById("capacity").value;
-                var status = document.getElementById("status").value.trim().toUpperCase();
-
-                console.log(standardId, section, capacity, status);
+                var className = document.getElementById("classname").value.trim().toUpperCase();;
+                var sectionId = parseInt(document.getElementById("sectionName").value);
+                var capacity = parseInt(document.getElementById("capacity").value);
+                var status = parseInt(document.getElementById("status").value);
 
 
                 try {
@@ -540,8 +560,8 @@
                             "Content-type": "application/json"
                         },
                         body: JSON.stringify({
-                            "StandardId": parseInt(standardId),
-                            "Section": section,
+                            "ClassName": className,
+                            "SectionId": sectionId,
                             "Capacity": capacity,
                             "Status": status
                         })

@@ -1,6 +1,6 @@
 ﻿namespace Project_StudentERP.DTOs
 {
-    public class AddStdFeeTypeMappingResponseDTO
+    public class AddClassFeeTypeMappingResponseDTO
     {
         public bool Success { get; set; }
         public string Message { get; set; }
