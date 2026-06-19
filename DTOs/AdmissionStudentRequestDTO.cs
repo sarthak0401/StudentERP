@@ -14,6 +14,8 @@
         public int FixedAmt { get; set; }
         public int ClassFeeTypeId { get; set; }
 
+        public int FtId { get; set; }
+
         public float Discount { get; set; }
 
         public float FinalAmount { get; set; }

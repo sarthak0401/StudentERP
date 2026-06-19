@@ -113,6 +113,43 @@ namespace Project_StudentERP.Services
             }
         }
 
+        public GetFeeForAlreadyAdmittedStudentResponseDTO GetAllFeeInfoForAlreadyAdmittedStudent(
+            int id
+        )
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                List<FeeForAdmittedStudent> fmList = conn.Query<FeeForAdmittedStudent>(
+                        "sp_getAllSelectedFeeTypesForParticularStudent",
+                        new { SId = id },
+                        commandType: CommandType.StoredProcedure
+                    )
+                    .ToList();
+
+                return new GetFeeForAlreadyAdmittedStudentResponseDTO
+                {
+                    Success = true,
+                    Status = 200,
+                    FeeLst = fmList,
+                    Message = "Successful operation",
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new GetFeeForAlreadyAdmittedStudentResponseDTO
+                {
+                    Status = 500,
+                    Success = false,
+                    Message = "Internal server error",
+                };
+            }
+        }
+
         public GetAllFeeTypesForParticularClassSectionResponseDTO GetAllFeeTypesForParticularClassSection(
             int id
         )
@@ -219,11 +256,112 @@ namespace Project_StudentERP.Services
         {
             try
             {
+                if (dto.SelectedFeesList == null || !dto.SelectedFeesList.Any())
+                {
+                    return new AdmissionStudentResponseDTO
+                    {
+                        Success = false,
+                        Status = 400,
+                        Message = "At least one fee must be selected.",
+                    };
+                }
+
                 using SqlConnection conn = new SqlConnection(
                     _configuration.GetConnectionString("DefaultConnection")
                 );
 
+                DataTable dt = new DataTable();
+                dt.Columns.Add("FtId", typeof(int));
+                dt.Columns.Add("FixedAmt", typeof(int));
+                dt.Columns.Add("Discount", typeof(float));
+                dt.Columns.Add("FinalAmount", typeof(float));
+
+                foreach (var x in dto.SelectedFeesList)
+                {
+                    dt.Rows.Add(x.FtId, x.FixedAmt, x.Discount, x.FinalAmount);
+                    //Console.WriteLine(x.FtId);
+                    //Console.WriteLine(x.FixedAmt);
+                    //Console.WriteLine(x.Discount);
+                    //Console.WriteLine(x.FinalAmount);
+                }
+
+                var param = new DynamicParameters();
+                param.Add("@StdId", dto.StdId);
+                param.Add("@CSId", dto.CSId);
+                param.Add("@SelectedFees", dt.AsTableValuedParameter("SelectedFeesType"));
+
+                int AdmissionId = conn.ExecuteScalar<int>(
+                    "sp_studentAdmission",
+                    param,
+                    commandType: CommandType.StoredProcedure
+                );
+
                 return new AdmissionStudentResponseDTO
+                {
+                    Success = true,
+                    Status = 200,
+                    Message = "Student admitted successfully",
+                    AdmissionId = AdmissionId,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new AdmissionStudentResponseDTO
+                {
+                    Status = 500,
+                    Message = "Internal Server Error",
+                    Success = false,
+                };
+            }
+        }
+
+        public UpdateFeeDetailsStudentResponseDTO UpdateFeeDetailsOfAlreadyAdmittedStudent(
+            UpdateFeeDetailsStudentRequestDTO dto
+        )
+        {
+            try
+            {
+                if (dto.SelectedFees == null || !dto.SelectedFees.Any())
+                {
+                    return new UpdateFeeDetailsStudentResponseDTO
+                    {
+                        Success = false,
+                        Status = 400,
+                        Message = "At least one fee must be selected.",
+                    };
+                }
+
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("FtId", typeof(int));
+                dt.Columns.Add("FixedAmt", typeof(int));
+                dt.Columns.Add("Discount", typeof(float));
+                dt.Columns.Add("FinalAmount", typeof(float));
+
+                foreach (var x in dto.SelectedFees)
+                {
+                    dt.Rows.Add(x.FtId, x.FixedAmt, x.Discount, x.FinalAmount);
+                    //Console.WriteLine(x.FtId);
+                    //Console.WriteLine(x.FixedAmt);
+                    //Console.WriteLine(x.Discount);
+                    //Console.WriteLine(x.FinalAmount);
+                }
+
+                var param = new DynamicParameters();
+                param.Add("@AdmId", dto.AdmissionId);
+                param.Add("@SelectedFees", dt.AsTableValuedParameter("SelectedFeesType"));
+
+                conn.Execute(
+                    "sp_updateAdmittedStudentFee",
+                    param,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return new UpdateFeeDetailsStudentResponseDTO
                 {
                     Success = true,
                     Status = 200,
@@ -233,7 +371,7 @@ namespace Project_StudentERP.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return new AdmissionStudentResponseDTO
+                return new UpdateFeeDetailsStudentResponseDTO
                 {
                     Status = 500,
                     Message = "Internal Server Error",

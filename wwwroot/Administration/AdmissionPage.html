@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+<html>
 <head>
     <meta charset="utf-8" />
     <title>Admission Section</title>
@@ -128,7 +129,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="Fee.html" class="nav-link">
                             <i class='bx bxs-book-open me-2'></i>
                             Fee
                         </a>
@@ -248,6 +249,8 @@
 
                     </div>
                 </div>
+                <input type="hidden" id="selectedCSId" />
+                <input type="hidden" id="selectedStudentAdmissionId" />
 
                 <div class="d-flex flex-column visually-hidden" id="outerDivTable">
                     <table class="table table-bordered mt-5">
@@ -263,7 +266,9 @@
                         <tbody id="AdmissionPageFeeTypesTable"></tbody>
                     </table>
 
-                    <button class="btn btn-primary btn-sm m-auto" onclick="admitStudentbtnclick()">Admit student</button>
+                    <button class="btn btn-primary btn-sm m-auto" onclick="admitStudentbtnclick()" id="btnSubmitStudent">Admit student</button>
+
+                    <button class="btn btn-primary btn-sm m-auto visually-hidden" onclick="updateFeeForAlreadyAdmittedStudentbtnclick()" id="btnFeeUpdateStudent">Update Fee</button>
                 </div>
             </div>
     </div>

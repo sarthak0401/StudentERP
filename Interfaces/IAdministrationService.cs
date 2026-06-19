@@ -7,6 +7,7 @@ namespace Project_StudentERP.Interfaces
     {
         Task AddStudent(StudentDTO dto, string filename, int tId);
         List<string> getAllContacts(int id);
+        GetFeeForAlreadyAdmittedStudentResponseDTO GetAllFeeInfoForAlreadyAdmittedStudent(int id);
         GetAllFeeTypesForParticularClassSectionResponseDTO GetAllFeeTypesForParticularClassSection(
             int id
         );
@@ -14,5 +15,8 @@ namespace Project_StudentERP.Interfaces
         Student GetStudentById(int id);
         List<SearchStudentResponseDTO> GetStudentsOnSearch(StudentSearchDTO studentSearchDTO);
         AdmissionStudentResponseDTO StudentAdmission(AdmissionStudentRequestDTO dto);
+        UpdateFeeDetailsStudentResponseDTO UpdateFeeDetailsOfAlreadyAdmittedStudent(
+            UpdateFeeDetailsStudentRequestDTO dto
+        );
     }
 }

@@ -160,5 +160,53 @@ namespace Project_StudentERP.Controllers
                 );
             }
         }
+
+        [HttpGet("get/fee/student/{id}")]
+        public IActionResult GetAllFeeForAlreadyAdmittedStudent(int id)
+        {
+            try
+            {
+                var res = _administrationService.GetAllFeeInfoForAlreadyAdmittedStudent(id);
+                return StatusCode(res.Status, res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Status = 500,
+                        Success = false,
+                        Message = "Internal Server Error",
+                    }
+                );
+            }
+        }
+
+        [HttpPost("update/feeDetails/student")]
+        public IActionResult UpdateFeeDetailsOfAlreadyAdmittedStudent(
+            [FromBody] UpdateFeeDetailsStudentRequestDTO dto
+        )
+        {
+            try
+            {
+                var res = _administrationService.UpdateFeeDetailsOfAlreadyAdmittedStudent(dto);
+                return StatusCode(res.Status, res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Status = 500,
+                        Success = false,
+                        Message = "Internal Server Error",
+                    }
+                );
+            }
+        }
     }
 }
