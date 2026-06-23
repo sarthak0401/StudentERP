@@ -208,6 +208,41 @@ namespace Project_StudentERP.Services
             }
         }
 
+        public FeeBalanceForAdmittedStudentResponseDTO GetBalanceFeeForAdmittedStudent(int id)
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+                List<FeeBalanceForAdmittedStudent> feeList =
+                    conn.Query<FeeBalanceForAdmittedStudent>(
+                            "sp_getFeeBalanceForAdmittedStudent",
+                            new { SId = id },
+                            commandType: CommandType.StoredProcedure
+                        )
+                        .ToList();
+
+                return new FeeBalanceForAdmittedStudentResponseDTO
+                {
+                    Success = true,
+                    Status = 200,
+                    Message = "Successfully fetched fee balance",
+                    Data = feeList,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new FeeBalanceForAdmittedStudentResponseDTO
+                {
+                    Success = false,
+                    Status = 500,
+                    Message = "Internal server error",
+                };
+            }
+        }
+
         public Student GetStudentById(int id)
         {
             try
@@ -312,6 +347,71 @@ namespace Project_StudentERP.Services
                     Status = 500,
                     Message = "Internal Server Error",
                     Success = false,
+                };
+            }
+        }
+
+        public async Task<UpdateFeeBalanceResponseDTO> UpdateFeeBalanceForAdmittedStudent(
+            UpdateFeeBalanceRequestDTO dto
+        )
+        {
+            try
+            {
+                /*
+                Console.WriteLine(dto.Remarks);
+                Console.WriteLine(dto.TransactionId);
+                Console.WriteLine(dto.AdmissionId);
+                Console.WriteLine(dto.PaymentType);
+                Console.WriteLine(dto.PaymentDate);
+
+                foreach (var x in dto.PaidFeeList)
+                {
+                    Console.WriteLine(x.AdmissionFeeId + ": " + x.AmountPaid);
+                }
+                */
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("AdmissionFeeId", typeof(int));
+                dt.Columns.Add("AmountPaid", typeof(decimal));
+
+                foreach (var x in dto.PaidFeeList)
+                {
+                    dt.Rows.Add(x.AdmissionFeeId, x.AmountPaid);
+                }
+
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                var param = new DynamicParameters();
+                param.Add("@AdmissionId", dto.AdmissionId);
+                param.Add("@PaymentType", dto.PaymentType);
+                param.Add("@PaymentDate", dto.PaymentDate);
+                param.Add("@Remark", dto.Remarks);
+                param.Add("@TransactionId", dto.TransactionId);
+                param.Add("@FeeList", dt.AsTableValuedParameter("FeeBalanceType"));
+
+                await conn.ExecuteAsync(
+                    "sp_updateBalanceFeeAmtForAdmittedStudent",
+                    param,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return new UpdateFeeBalanceResponseDTO
+                {
+                    Success = true,
+                    Status = 200,
+                    Message = "Successfully updated the Fee Balance",
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new UpdateFeeBalanceResponseDTO
+                {
+                    Status = 500,
+                    Success = false,
+                    Message = "Internal Server Error",
                 };
             }
         }

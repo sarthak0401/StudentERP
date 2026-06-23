@@ -12,9 +12,13 @@ namespace Project_StudentERP.Interfaces
             int id
         );
         List<Student> GetAllStudents();
+        FeeBalanceForAdmittedStudentResponseDTO GetBalanceFeeForAdmittedStudent(int id);
         Student GetStudentById(int id);
         List<SearchStudentResponseDTO> GetStudentsOnSearch(StudentSearchDTO studentSearchDTO);
         AdmissionStudentResponseDTO StudentAdmission(AdmissionStudentRequestDTO dto);
+        Task<UpdateFeeBalanceResponseDTO> UpdateFeeBalanceForAdmittedStudent(
+            UpdateFeeBalanceRequestDTO dto
+        );
         UpdateFeeDetailsStudentResponseDTO UpdateFeeDetailsOfAlreadyAdmittedStudent(
             UpdateFeeDetailsStudentRequestDTO dto
         );

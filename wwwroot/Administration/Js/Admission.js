@@ -399,11 +399,6 @@ async function selectStudent(studentId, studentName) {
             });
         }
         else {
-            document.getElementById("outerDivTable").classList.add("visually-hidden");
-            iziToast.error({
-                title: "ERROR!",
-                message: "No fee mapping for this class found! Try mapping the fees first or select another class"
-            })
             AdmissionPgTableBody.innerHTML = "";
             return;
         }

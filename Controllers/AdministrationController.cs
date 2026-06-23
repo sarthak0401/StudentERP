@@ -208,5 +208,53 @@ namespace Project_StudentERP.Controllers
                 );
             }
         }
+
+        [HttpGet("get/balanceFee/student/{id}")]
+        public IActionResult GetBalanceFeeForAdmittedStudent(int id)
+        {
+            try
+            {
+                var res = _administrationService.GetBalanceFeeForAdmittedStudent(id);
+                return StatusCode(res.Status, res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Status = 500,
+                        Success = false,
+                        Message = "Internal Server Error",
+                    }
+                );
+            }
+        }
+
+        [HttpPost("update/balance/fee/student")]
+        public async Task<IActionResult> UpdateFeeBalanceForAdmittedStudent(
+            [FromBody] UpdateFeeBalanceRequestDTO dto
+        )
+        {
+            try
+            {
+                var res = await _administrationService.UpdateFeeBalanceForAdmittedStudent(dto);
+                return StatusCode(res.Status, res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Success = false,
+                        Status = 500,
+                        Message = "Internal Server Error",
+                    }
+                );
+            }
+        }
     }
 }
