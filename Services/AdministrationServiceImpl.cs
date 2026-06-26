@@ -1,10 +1,15 @@
 ﻿using System.Data;
 using Dapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.SqlClient;
+using Project_StudentERP.Documents;
+using Project_StudentERP.Documents.Project_StudentERP.Documents;
 using Project_StudentERP.DTOs;
 using Project_StudentERP.Interfaces;
 using Project_StudentERP.Models;
+using Project_StudentERP.Services;
+using QuestPDF.Fluent;
 
 namespace Project_StudentERP.Services
 {
@@ -12,14 +17,17 @@ namespace Project_StudentERP.Services
     {
         public readonly ILogger<AdministrationServiceImpl> _logger;
         public readonly IConfiguration _configuration;
+        public readonly IEmailService _emailService;
 
         public AdministrationServiceImpl(
             ILogger<AdministrationServiceImpl> logger,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IEmailService emailService
         )
         {
             _logger = logger;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         public async Task AddStudent(StudentDTO dto, string filename, int tId)
@@ -77,6 +85,8 @@ namespace Project_StudentERP.Services
                 parameters.Add("@SGapYears", dto.SGapYears);
                 parameters.Add("@SGapJustification", dto.SGapJustification);
                 parameters.Add("@TId", tId);
+                parameters.Add("@SEmail", dto.SEmail);
+                parameters.Add("@SGuardianEmail", dto.SGuardianEmail);
 
                 await connection.ExecuteAsync(
                     "sp_addOrEditStudent",
@@ -391,10 +401,34 @@ namespace Project_StudentERP.Services
                 param.Add("@TransactionId", dto.TransactionId);
                 param.Add("@FeeList", dt.AsTableValuedParameter("FeeBalanceType"));
 
-                await conn.ExecuteAsync(
+                var res = await conn.QuerySingleAsync<PaymentReceiptResult>(
                     "sp_updateBalanceFeeAmtForAdmittedStudent",
                     param,
                     commandType: CommandType.StoredProcedure
+                );
+
+                // Getting receipt byte array (byte [])
+                var ReceiptByteArray = await GenerateReceipt(res.ReceiptId);
+
+                // Sending the mail to the student and their parent email Id
+                //_ = _emailService.SendReceipt(
+                //    res.SEmail,
+                //    res.ParentEmail,
+                //    res.SName,
+                //    res.ReceiptNo,
+                //    res.TotalAmtPaid,
+                //    res.PaymentDate,
+                //    ReceiptByteArray
+                //);
+
+                _ = _emailService.SendReceipt(
+                    res.SEmail,
+                    res.ParentEmail,
+                    res.SName,
+                    res.ReceiptNo,
+                    res.TotalAmtPaid,
+                    res.PaymentDate,
+                    ReceiptByteArray
                 );
 
                 return new UpdateFeeBalanceResponseDTO
@@ -402,7 +436,11 @@ namespace Project_StudentERP.Services
                     Success = true,
                     Status = 200,
                     Message = "Successfully updated the Fee Balance",
+                    ReceiptId = res.ReceiptId,
+                    ReceiptNumber = res.ReceiptNo,
                 };
+
+                //email
             }
             catch (Exception ex)
             {
@@ -476,6 +514,76 @@ namespace Project_StudentERP.Services
                     Status = 500,
                     Message = "Internal Server Error",
                     Success = false,
+                };
+            }
+        }
+
+        public async Task<List<ReceiptRow>> GetReceipt(int receiptId)
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                var data = await conn.QueryAsync<ReceiptRow>(
+                    "sp_GetReceipt",
+                    new { ReceiptId = receiptId },
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return data.ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new();
+            }
+        }
+
+        public async Task<byte[]> GenerateReceipt(int receiptId)
+        {
+            var rows = await GetReceipt(receiptId);
+
+            if (!rows.Any())
+                throw new Exception("Receipt not found");
+
+            var pdfBytes = new ReceiptDocument(rows).GeneratePdf();
+
+            return pdfBytes;
+        }
+
+        public GetAllReceiptsResponseDTO GetAllReceipts(int id)
+        {
+            try
+            {
+                using SqlConnection conn = new SqlConnection(
+                    _configuration.GetConnectionString("DefaultConnection")
+                );
+
+                List<ReceiptDTO> ReceiptsList = conn.Query<ReceiptDTO>(
+                        "sp_getAllReceiptsForAParticularStudent",
+                        new { StdId = id },
+                        commandType: CommandType.StoredProcedure
+                    )
+                    .ToList();
+
+                return new GetAllReceiptsResponseDTO
+                {
+                    Status = 200,
+                    Message = "Receipts fetching successfull",
+                    Success = true,
+                    Receipts = ReceiptsList,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new GetAllReceiptsResponseDTO
+                {
+                    Status = 500,
+                    Success = false,
+                    Message = "Internal server error",
                 };
             }
         }

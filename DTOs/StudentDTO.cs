@@ -34,6 +34,9 @@ namespace Project_StudentERP.DTOs
         public string? ExistingImage { get; set; }
 
         public List<StudentContactNo> ContactNos { get; set; } = new();
+
+        public string SEmail { get; set; }
+        public string SGuardianEmail { get; set; }
     }
 
     public class StudentContactNo

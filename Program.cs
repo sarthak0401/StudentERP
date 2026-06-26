@@ -1,9 +1,13 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Project_StudentERP.Documents.EmailTemplates;
 using Project_StudentERP.Interfaces;
 using Project_StudentERP.Services;
+using QuestPDF.Infrastructure;
 using Serilog;
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -12,12 +16,15 @@ Log.Logger = new LoggerConfiguration()
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Mapping email settings config that is present in the appsettings.json
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 // Mapping the services with the controller
 builder.Services.AddScoped<IAuthService, AuthServiceImpl>();
-
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAdminSectionService, AdminSectionServiceImpl>();
 builder.Services.AddSwaggerGen();
 

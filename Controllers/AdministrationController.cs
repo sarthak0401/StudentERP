@@ -256,5 +256,51 @@ namespace Project_StudentERP.Controllers
                 );
             }
         }
+
+        [HttpGet("download/receipt/{receiptId}")]
+        public async Task<IActionResult> DownloadReceipt(int receiptId)
+        {
+            try
+            {
+                var pdfBytes = await _administrationService.GenerateReceipt(receiptId);
+                return File(pdfBytes, "application/pdf", $"receipt_{receiptId}.pdf");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Success = false,
+                        Status = 500,
+                        Message = "Internal Server Error",
+                    }
+                );
+            }
+        }
+
+        [HttpGet("get/receipts/student/{id}")]
+        public IActionResult GetAllReceipts(int id)
+        {
+            try
+            {
+                var res = _administrationService.GetAllReceipts(id);
+                return StatusCode(res.Status, res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        Success = false,
+                        Status = 500,
+                        Message = "Internal Server Error",
+                    }
+                );
+            }
+        }
     }
 }

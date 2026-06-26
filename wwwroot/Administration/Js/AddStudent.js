@@ -48,7 +48,8 @@ async function SubmitStudentDetails() {
         var sJuniorClgName = document.getElementById("schoolName").value;
         var sGapYears = document.getElementById("gapYrs").value;
         var sGapJustification = document.getElementById("gapYrJustification").value;
-
+        var sEmail = document.getElementById("sEmail").value;
+        var sGuardianEmail = document.getElementById("gEmail").value;
 
         const formData = new FormData();
         formData.append("SName", sName);
@@ -114,7 +115,8 @@ async function SubmitStudentDetails() {
         formData.append("SGapYears", sGapYears);
         formData.append("SGapJustification", sGapJustification);
         formData.append("ExistingImage", document.getElementById("existingImage").value);
-
+        formData.append("SEmail", sEmail);
+        formData.append("SGuardianEmail", sGuardianEmail);
 
 
         try {
@@ -283,10 +285,8 @@ async function handleEdit(id) {
         document.getElementById("schoolName").value = student.sJuniorClgName;
         document.getElementById("gapYrs").value = student.sGapYears;
         document.getElementById("gapYrJustification").value = student.sGapJustification;
-
-
-
-
+        document.getElementById("sEmail").value = student.sEmail;
+        document.getElementById("gEmail").value = student.parentEmail;
     }
     catch (err) {
         console.log(err);
@@ -358,6 +358,9 @@ function cleanFields() {
     document.getElementById("schoolName").value = "";
     document.getElementById("gapYrs").value = "";
     document.getElementById("gapYrJustification").value = "";
+    document.getElementById("sEmail").value = "";
+    document.getElementById("gEmail").value = "";
+
 
     const container = document.getElementById("contactContainer");
 
@@ -446,7 +449,8 @@ function validations() {
     var sJuniorClgName = document.getElementById("schoolName").value;
     var sGapYears = document.getElementById("gapYrs").value;
     var sGapJustification = document.getElementById("gapYrJustification").value;
-
+    var sEmail = document.getElementById("sEmail").value;
+    var sGuardianEmail = document.getElementById("gEmail").value;
 
     if (sName == "") {
         iziToast.error({
@@ -701,6 +705,25 @@ function validations() {
         iziToast.error({
             title: 'Error',
             message: "Please enter gap justification, if not there enter NA!",
+            position: 'topRight'
+
+        });
+        return false;
+    }
+
+    if (sEmail == "") {
+        iziToast.error({
+            title: 'Error',
+            message: "Please add the student email",
+            position: 'topRight'
+
+        });
+        return false;
+    }
+    if (sGuardianEmail == "") {
+        iziToast.error({
+            title: 'Error',
+            message: "Please add the guardian email",
             position: 'topRight'
 
         });

@@ -201,10 +201,26 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="Fee.html" class="nav-link">
-                        <i class='bx bxs-book-open me-2'></i>
-                        Fee
+                    <a href="#feeMenu" class="nav-link" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                        <i class='bx bx-wallet me-2'></i>Fee
                     </a>
+                    <div id="feeMenu" class="collapse">
+                        <ul class="nav flex-column ms-5">
+                            <li class="nav-item">
+                                <a href="Fee.html" class="nav-link ">
+                                    <i class='bx bx-purchase-tag'></i>
+                                    Fee Payment
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="FeeReceipt.html" class="nav-link">
+                                    <i class='bx bx-link-alt'></i>
+                                    Fee Receipt
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
                 </li>
 
             </ul>
@@ -310,10 +326,18 @@
                     </div>
                 </div>-->
 
-                        <div class="row mb-3">
-                            <label for="sdob" class="col-sm-2 col-form-label">Date of Birth</label>
-                            <div class="col-sm-10">
-                                <input id="sdob" type="date" class="form-control" />
+                        <div class="row mb-3 ">
+                            <div class="col-md-6 d-flex">
+                                <label for="sdob" class="col-sm-2 col-form-label">Date of Birth</label>
+                                <div class="col-sm-8 ps-sm-3">
+                                    <input id="sdob" type="date" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6 d-flex">
+                                <label for="sEmail" class="col-sm-2 col-form-label text-center">Email</label>
+                                <div class="col-sm-8">
+                                    <input id="sEmail" type="email" class="form-control" placeholder="Enter the email"/>
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -415,6 +439,13 @@
                                 <input id="gcontact2" type="text" class="form-control"
                                        placeholder="Enter 10 digits phone number"
                                        maxlength="10" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="gEmail" class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                                <input id="gEmail" type="email" class="form-control"
+                                       placeholder="Enter the email" />
                             </div>
                         </div>
 

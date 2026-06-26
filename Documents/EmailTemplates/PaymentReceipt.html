@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <style>
+
+        body {
+            font-family: Arial,Helvetica,sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 25px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        }
+
+        .header {
+            background: #0d6efd;
+            color: white;
+            padding: 18px;
+            text-align: center;
+        }
+
+            .header h2 {
+                margin: 0;
+            }
+
+        .content {
+            padding: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="header">
+
+            <h2>STUDENT FEE RECEIPT</h2>
+
+        </div>
+
+        <div class="content">
+
+            <p>Hello <strong>{{StudentName}}</strong>,</p>
+
+            <p>
+                Your fee payment has been received successfully.
+            </p>
+
+            <table>
+
+                <tr>
+
+                    <td><strong>Receipt Number</strong></td>
+
+                    <td>{{ReceiptNo}}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td><strong>Amount Paid</strong></td>
+
+                    <td>₹{{AmountPaid}}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td><strong>Payment Date</strong></td>
+
+                    <td>{{PaymentDate}}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td><strong>Status</strong></td>
+
+                    <td class="success">
+                        Successful
+                    </td>
+
+                </tr>
+
+            </table>
+
+            <p style="margin-top:20px;">
+                The payment receipt has been attached with this email.
+                Please keep it for future reference.
+            </p>
+
+            <div class="footer">
+
+                Regards,<br>
+
+                Student ERP<br>
+
+                ABC Public School
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

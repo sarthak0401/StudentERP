@@ -46,5 +46,7 @@ namespace Project_StudentERP.Models
         public int? SGapYears { get; set; }
 
         public string? SGapJustification { get; set; }
+        public string? SEmail { get; set; }
+        public string? ParentEmail { get; set; }
     }
 }

@@ -224,11 +224,25 @@ async function savePaymentDetailsBtnClick() {
         });
 
         const res = await response.json();
+       
         if (res.success) {
             iziToast.success({
                 title: "OK!",
                 message: "Successfully updated balance for the student!"
             });
+
+
+            // setting the details for the modal
+            document.getElementById("ReceiptIdForThePayment").value =
+                res.receiptId;
+
+            document.getElementById("modalReceiptNo").innerText =
+                res.receiptNumber;
+
+            // showing the payment summary model
+            new bootstrap.Modal(
+                document.getElementById("paymentSuccessModal")
+            ).show();
         }
         else {
             iziToast.error({
@@ -260,4 +274,13 @@ async function savePaymentDetailsBtnClick() {
         // Clearing the table
         document.getElementById("FeePgFeeTypesTable").innerHTML = "";
     }
+}
+
+
+function downloadReceiptFromModal() {
+    const receiptId = document.getElementById("ReceiptIdForThePayment").value;
+
+    window.open(`https://localhost:7098/api/adm/download/receipt/${receiptId}`, "_blank");
+
+    document.getElementById("ReceiptIdForThePayment").value="";
 }

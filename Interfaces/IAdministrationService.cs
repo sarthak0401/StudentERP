@@ -6,11 +6,13 @@ namespace Project_StudentERP.Interfaces
     public interface IAdministrationService
     {
         Task AddStudent(StudentDTO dto, string filename, int tId);
+        Task<byte[]> GenerateReceipt(int receiptId);
         List<string> getAllContacts(int id);
         GetFeeForAlreadyAdmittedStudentResponseDTO GetAllFeeInfoForAlreadyAdmittedStudent(int id);
         GetAllFeeTypesForParticularClassSectionResponseDTO GetAllFeeTypesForParticularClassSection(
             int id
         );
+        GetAllReceiptsResponseDTO GetAllReceipts(int id);
         List<Student> GetAllStudents();
         FeeBalanceForAdmittedStudentResponseDTO GetBalanceFeeForAdmittedStudent(int id);
         Student GetStudentById(int id);
