@@ -263,4 +263,3 @@ async function addStdFeeMappingBtn() {
         document.getElementById("outerDivFeeTypes").classList.add("visually-hidden");
     }
 }
-
